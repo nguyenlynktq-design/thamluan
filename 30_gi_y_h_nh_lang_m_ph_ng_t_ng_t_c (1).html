@@ -1,0 +1,2968 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>30 Giây Ở Hành Lang – Mô Phỏng Tương Tác Điện Ảnh</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Google Fonts: Be Vietnam Pro & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', '"Be Vietnam Pro"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 16:9 Presentation Projector Ratio & Responsive Fallback */
+    .cinema-viewport {
+      aspect-ratio: 16 / 9;
+      max-height: 93vh;
+      width: 100%;
+    }
+    @media (max-aspect-ratio: 16/9) {
+      .cinema-viewport {
+        aspect-ratio: auto;
+        height: 92vh;
+      }
+    }
+    .glass-dark {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .scene-fade-in {
+      animation: sceneFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes sceneFadeIn {
+      from { opacity: 0; transform: scale(0.99); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .btn-cinema {
+      transition: all 0.2s ease;
+    }
+    .btn-cinema:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(2, 132, 199, 0.4);
+    }
+    .btn-cinema:active {
+      transform: translateY(0);
+    }
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.4);
+      border-radius: 4px;
+    }
+    /* Audio Button Interactive & Wave Animation */
+    .audio-btn {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .audio-btn:hover {
+      transform: translateY(-1px);
+    }
+    .audio-btn.audio-active-btn, .btn-slide-audio.audio-active-btn {
+      background-color: rgba(56, 189, 248, 0.3) !important;
+      border-color: #38bdf8 !important;
+      color: #38bdf8 !important;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.5) !important;
+      animation: audioPulse 1.2s infinite alternate ease-in-out;
+    }
+    @keyframes audioPulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.04); box-shadow: 0 0 20px rgba(56, 189, 248, 0.7); }
+    }
+  </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 font-sans antialiased h-full flex flex-col justify-center items-center p-1 sm:p-3 overflow-hidden select-none">
+
+  <!-- MAIN STAGE WRAPPER -->
+  <div id="simulation-frame" class="cinema-viewport relative bg-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-800 flex flex-col justify-between">
+    
+    <!-- TOP TOOLBAR -->
+    <header class="relative z-30 px-3 sm:px-6 py-2.5 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 flex items-center justify-between">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button onclick="goToScene('opening')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-sky-500 to-amber-400 flex items-center justify-center text-slate-950 font-black text-xs sm:text-sm shadow-md hover:scale-105 transition" title="Về trang đầu">
+          30s
+        </button>
+        <div>
+          <h1 class="text-xs sm:text-sm font-bold tracking-tight text-white flex items-center gap-1.5 cursor-pointer" onclick="goToScene('opening')">
+            <span>30 Giây Ở Hành Lang</span>
+            <span class="hidden lg:inline text-[10px] px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-500/30">Mô phỏng điện ảnh</span>
+          </h1>
+          <p class="text-[10px] text-slate-400 hidden sm:block">Trường THCS THSP Lý Tự Trọng • Tổ Lịch sử-Địa lí-GDCD • <span class="text-amber-300 font-semibold">GV: Nguyễn Thị Hiền</span></p>
+        </div>
+      </div>
+
+      <!-- Navigation Step Counter & Next/Prev Buttons -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button id="btn-header-prev" onclick="prevScene()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 flex items-center gap-1 transition" title="Quay lại cảnh trước (Phím ←)">
+          <i class="fa-solid fa-chevron-left text-[11px]"></i>
+          <span class="hidden md:inline">Quay lại</span>
+        </button>
+
+        <div class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-400 font-medium bg-slate-900/90 px-3 py-1.5 rounded-lg border border-slate-800">
+          <span id="step-name" class="text-sky-400 font-semibold truncate max-w-[130px] md:max-w-[200px]">Khởi đầu tình huống</span>
+          <span class="text-slate-600">•</span>
+          <span id="step-number" class="text-slate-300">1 / 15</span>
+        </div>
+
+        <button id="btn-header-next" onclick="nextScene()" class="btn-cinema px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-sky-500 hover:from-amber-400 hover:to-sky-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition" title="Tiếp tục (Phím → hoặc Space)">
+          <span>Tiếp tục</span>
+          <i class="fa-solid fa-chevron-right text-[11px]"></i>
+        </button>
+      </div>
+
+      <!-- Slide Audio Button & System Controls -->
+      <div class="flex items-center space-x-1.5 sm:space-x-2">
+        <button id="btn-read-slide" onclick="toggleCurrentSlideVoice()" class="btn-cinema px-2.5 sm:px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/20 to-sky-500/20 hover:from-amber-500/30 hover:to-sky-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition" title="Bấm phát/dừng toàn bộ nội dung slide hiện tại">
+          <i id="slide-audio-icon" class="fa-solid fa-volume-high text-amber-400"></i>
+          <span id="slide-audio-text" class="hidden md:inline">Đọc slide này</span>
+        </button>
+        <button onclick="openCharacterModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition" title="Xem hồ sơ nhân vật">
+          <i class="fa-solid fa-users text-amber-400"></i>
+          <span class="hidden md:inline">Nhân vật</span>
+        </button>
+
+        <button id="btn-ai-voice-toggle" onclick="openAIVoiceModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-400 text-xs font-medium border border-slate-700 flex items-center gap-1.5 transition" title="Cài đặt giọng Gemini AI Studio">
+          <i class="fa-solid fa-microphone-lines text-sky-400"></i>
+          <span id="ai-voice-status-text" class="hidden sm:inline">Giọng Gemini TTS</span>
+        </button>
+
+        <button id="btn-sound-toggle" onclick="toggleAudio()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center border border-slate-700 transition" title="Bật/Tắt âm thanh">
+          <i id="sound-icon" class="fa-solid fa-volume-high text-sky-400"></i>
+        </button>
+
+        <button onclick="resetSimulation()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center border border-slate-700 transition" title="Bắt đầu lại">
+          <i class="fa-solid fa-rotate-left"></i>
+        </button>
+
+        <button onclick="toggleFullScreen()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs flex items-center justify-center border border-slate-700 transition" title="Toàn màn hình">
+          <i id="fullscreen-icon" class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- DYNAMIC SCENE CONTAINER -->
+    <main id="scene-viewport" class="relative flex-1 w-full h-full overflow-hidden flex items-center justify-center">
+      <!-- Injected via Scenes router -->
+    </main>
+
+    <!-- NARRATOR SUBTITLE BANNER -->
+    <div id="narrator-overlay" class="absolute bottom-2 inset-x-4 sm:inset-x-12 z-30 transition-all duration-300 pointer-events-none opacity-0 transform translate-y-3">
+      <div class="glass-dark px-4 py-2.5 rounded-xl border border-slate-700/80 text-center shadow-2xl flex items-center justify-center space-x-3">
+        <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-sky-500/20 text-sky-400 text-xs shrink-0">
+          <i class="fa-solid fa-volume-high animate-pulse"></i>
+        </span>
+        <p id="narrator-text" class="text-xs sm:text-sm text-slate-100 font-medium tracking-wide drop-shadow line-clamp-2"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CHARACTER ROSTER MODAL -->
+  <div id="character-roster-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="glass-card max-w-4xl w-full rounded-2xl p-5 sm:p-6 shadow-2xl border border-sky-300/40 text-slate-800 space-y-4 max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3 border-slate-200">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-amber-500 text-white flex items-center justify-center font-bold text-lg shadow-md">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base sm:text-lg text-slate-900">Tuyến Nhân Vật Mô Phỏng Học Đường</h3>
+            <p class="text-xs text-slate-500">Đồng phục sơ mi trắng học sinh Việt Nam & chuẩn mực tâm lý lứa tuổi</p>
+          </div>
+        </div>
+        <button onclick="closeCharacterModal()" class="text-slate-400 hover:text-slate-700 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
+        <!-- MINH -->
+        <div class="bg-gradient-to-b from-sky-50 to-white rounded-xl p-3.5 border border-sky-200 flex flex-col items-center text-center shadow-sm">
+          <div id="roster-avatar-minh" class="w-24 h-24 mb-2"></div>
+          <span class="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[11px] font-bold uppercase mb-1">Minh (Người chứng kiến)</span>
+          <h4 class="font-bold text-sm text-slate-800">Lớp 8A – Đeo ba lô</h4>
+          <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">
+            Đứng trước ngã ba đường: Nghe bạn bè rút máy quay hay bản lĩnh hạ máy tìm giải pháp an toàn.
+          </p>
+          <button onclick="SpeechService.speakCharacter('minh', 'Mình phải dừng lại... nếu mình cũng quay thì danh dự bạn bè sẽ ra sao?')" class="mt-2.5 px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-medium flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-volume-high"></i> Thử giọng Minh
+          </button>
+        </div>
+
+        <!-- AN -->
+        <div class="bg-gradient-to-b from-rose-50 to-white rounded-xl p-3.5 border border-rose-200 flex flex-col items-center text-center shadow-sm">
+          <div id="roster-avatar-an" class="w-24 h-24 mb-2"></div>
+          <span class="px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[11px] font-bold uppercase mb-1">An (Bức xúc)</span>
+          <h4 class="font-bold text-sm text-slate-800">Học sinh lớp 8</h4>
+          <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">
+            Bị xúc phạm danh dự trên mạng xã hội nên bức xúc, nóng nảy đối chất trực tiếp ở hành lang.
+          </p>
+          <button onclick="SpeechService.speakCharacter('an', 'Cậu nói xấu tôi trong nhóm lớp đúng không? Cậu còn nói thế à?')" class="mt-2.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-medium flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-volume-high"></i> Thử giọng An
+          </button>
+        </div>
+
+        <!-- HOÀNG -->
+        <div class="bg-gradient-to-b from-amber-50 to-white rounded-xl p-3.5 border border-amber-200 flex flex-col items-center text-center shadow-sm">
+          <div id="roster-avatar-hoang" class="w-24 h-24 mb-2"></div>
+          <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold uppercase mb-1">Hoàng (Bốc đồng)</span>
+          <h4 class="font-bold text-sm text-slate-800">Học sinh lớp 8</h4>
+          <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">
+            Sĩ diện trước đám đông, dễ kích động phòng vệ gay gắt khi thấy máy quay chĩa vào mình.
+          </p>
+          <button onclick="SpeechService.speakCharacter('hoang', 'Tôi nói gì thì liên quan gì đến cậu? Tránh ra!')" class="mt-2.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-medium flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-volume-high"></i> Thử giọng Hoàng
+          </button>
+        </div>
+
+        <!-- CÔ GIÁO MAI -->
+        <div class="bg-gradient-to-b from-emerald-50 to-white rounded-xl p-3.5 border border-emerald-200 flex flex-col items-center text-center shadow-sm">
+          <div id="roster-avatar-teacher" class="w-24 h-24 mb-2"></div>
+          <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold uppercase mb-1">Cô giáo Nguyễn Thị Hiền</span>
+          <h4 class="font-bold text-sm text-slate-800">Chủ nhiệm & Tư vấn tâm lý</h4>
+          <p class="text-[11px] text-slate-600 mt-1 leading-relaxed">
+            Áo dài trang nhã, điềm đạm, ấm áp. Hòa giải bằng thấu cảm và thượng tôn nhân cách học sinh.
+          </p>
+          <button onclick="SpeechService.speakCharacter('teacher', 'Các em dừng lại đã. Trước hết chúng ta cùng hít thở sâu và bình tĩnh.')" class="mt-2.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-medium flex items-center gap-1.5 shadow-sm transition">
+            <i class="fa-solid fa-volume-high"></i> Thử giọng Cô Hiền
+          </button>
+        </div>
+      </div>
+
+      <div class="p-3 bg-slate-100 rounded-xl text-xs text-slate-600 flex items-center justify-between">
+        <span><i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i> Chuẩn mô hình đồng phục học sinh Việt Nam.</span>
+        <button onclick="closeCharacterModal()" class="px-4 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs transition">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI VOICE MODAL -->
+  <div id="ai-voice-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="glass-card max-w-lg w-full rounded-2xl p-5 sm:p-6 shadow-2xl border border-sky-300/40 text-slate-800 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3 border-slate-200">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-lg bg-sky-600 text-white flex items-center justify-center font-bold">
+            <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Cài Đặt Giọng Nói Gemini AI</h3>
+            <p class="text-xs text-slate-500">Google AI Studio Gemini 2.5 Flash Text-to-Speech</p>
+          </div>
+        </div>
+        <button onclick="closeAIVoiceModal()" class="text-slate-400 hover:text-slate-700 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Direct AI Studio Link -->
+        <div class="p-3 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-900 space-y-1.5">
+          <div class="flex items-center justify-between font-semibold">
+            <span><i class="fa-solid fa-key text-sky-600 mr-1.5"></i> Lấy Gemini API Key miễn phí:</span>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-sky-600 hover:bg-sky-700 text-white font-medium text-[11px] transition">
+              <span>Đến Google AI Studio</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+          </div>
+          <p class="text-[11px] text-slate-600 leading-relaxed">
+            Dán mã API Key vào ô dưới để kích hoạt trực tiếp giọng đọc AI truyền cảm chuẩn miền Bắc của Gemini.
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Gemini API Key:</label>
+          <div class="relative">
+            <input type="password" id="input-gemini-key" placeholder="AIzaSy..." class="w-full text-xs px-3 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono bg-white">
+            <button onclick="toggleKeyVisibility()" type="button" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+              <i id="eye-icon" class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+          <div id="ai-voice-feedback" class="text-[11px] mt-1.5 hidden"></div>
+        </div>
+
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+          <div class="font-semibold text-slate-700 flex items-center justify-between">
+            <span>Tiêu chuẩn âm thanh tham luận:</span>
+            <span class="text-sky-700 font-bold text-[11px]"><i class="fa-solid fa-sparkles"></i> 100% Gemini AI TTS</span>
+          </div>
+          <p class="text-slate-600 text-[11px] leading-relaxed">
+            Hệ thống <strong>chỉ sử dụng giọng đọc tiếng Việt tự nhiên của Gemini AI</strong>, không sử dụng giọng máy (robot). Các câu thoại sau khi tải sẽ được lưu đệm để phát tức thì.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+        <button id="btn-test-voice" onclick="testSpeechSample()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5">
+          <i class="fa-solid fa-play text-xs text-sky-600"></i> Kiểm tra & Thử giọng
+        </button>
+        <div class="flex items-center space-x-2">
+          <button onclick="saveVoiceSettings()" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-700 text-white font-semibold text-xs transition">
+            Lưu cấu hình
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       GLOBAL STATE MANAGER
+       ========================================================================== */
+    const State = {
+      currentScene: 'opening',
+      soundEnabled: true,
+      autoPlayOnSceneChange: false, // Để người báo cáo chủ động bấm phát khi cần
+      apiKey: sessionStorage.getItem('GEMINI_API_KEY') || '',
+      userChoice: null,
+      countdownTimer: null,
+      countdownRemaining: 30,
+      audioContext: null,
+      currentAudioSource: null,
+      currentHtmlAudio: null,
+      audioCache: {},
+      isSpeaking: false,
+      currentPlayingText: null,
+      currentActiveBtn: null,
+      speechId: 0,
+      activeFlowTimers: [],
+      currentAbortController: null
+    };
+
+    /* ==========================================================================
+       WEB AUDIO SYNTHESIZER (HIỆU ỨNG TỰ THÂN - HOẠT ĐỘNG 100% TRÊN NETLIFY)
+       ========================================================================== */
+    const SoundEngine = {
+      init: function() {
+        if (!State.audioContext) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          State.audioContext = new AudioContext();
+        }
+        if (State.audioContext.state === 'suspended') {
+          State.audioContext.resume().catch(() => {});
+        }
+      },
+
+      // Tiếng trống trường khai mạc (3 tiếng "Tùng... Tùng... Tùng...")
+      playSchoolDrum: function() {
+        if (!State.soundEnabled) return;
+        this.init();
+        const ctx = State.audioContext;
+        const now = ctx.currentTime;
+
+        [0, 0.7, 1.4].forEach((delay) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(140, now + delay);
+          osc.frequency.exponentialRampToValueAtTime(45, now + delay + 0.45);
+
+          gain.gain.setValueAtTime(0.7, now + delay);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.6);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + delay);
+          osc.stop(now + delay + 0.65);
+        });
+      },
+
+      // Tiếng tích tắc đồng hồ 30 giây
+      playTick: function() {
+        if (!State.soundEnabled) return;
+        this.init();
+        const ctx = State.audioContext;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.05);
+
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.06);
+      },
+
+      // Tiếng dừng hình đột ngột (Freeze Frame Whoosh)
+      playFreeze: function() {
+        if (!State.soundEnabled) return;
+        this.init();
+        const ctx = State.audioContext;
+        const now = ctx.currentTime;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.5);
+      },
+
+      // Tiếng chụp ảnh màn hình điện thoại
+      playCameraShutter: function() {
+        if (!State.soundEnabled) return;
+        this.init();
+        const ctx = State.audioContext;
+        const now = ctx.currentTime;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(1400, now);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.06);
+      },
+
+      // Tiếng chuông hòa giải / bình yên
+      playPeaceChime: function() {
+        if (!State.soundEnabled) return;
+        this.init();
+        const ctx = State.audioContext;
+        const now = ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+
+          gain.gain.setValueAtTime(0.2, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 1.2);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 1.3);
+        });
+      },
+
+      // Hiệu ứng đám đông xôn xao
+      playCrowdCheer: function() {
+        if (!State.soundEnabled) return;
+        this.init();
+        const ctx = State.audioContext;
+        const now = ctx.currentTime;
+        
+        const bufferSize = ctx.sampleRate * 1.2;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.9));
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(700, now);
+        filter.Q.setValueAtTime(2.0, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        noise.start(now);
+        noise.stop(now + 1.2);
+      }
+    };
+
+    /* ==========================================================================
+       AI VOICE & SPEECH SERVICE (GEMINI AI STUDIO TTS & SMART FALLBACK)
+       ========================================================================== */
+    const SpeechService = {
+      stopAll: function() {
+        State.speechId++;
+        if (State.currentAbortController) {
+          try { State.currentAbortController.abort(); } catch(e) {}
+          State.currentAbortController = null;
+        }
+        if (State.activeFlowTimers && State.activeFlowTimers.length > 0) {
+          State.activeFlowTimers.forEach(t => clearTimeout(t));
+          State.activeFlowTimers = [];
+        }
+        if (State.currentHtmlAudio) {
+          try {
+            State.currentHtmlAudio.pause();
+            State.currentHtmlAudio.currentTime = 0;
+          } catch(e) {}
+          State.currentHtmlAudio = null;
+        }
+        if (State.currentAudioSource) {
+          try {
+            State.currentAudioSource.stop();
+            State.currentAudioSource.disconnect();
+          } catch(e) {}
+          State.currentAudioSource = null;
+        }
+        if (window.speechSynthesis) {
+          try { window.speechSynthesis.cancel(); } catch(e) {}
+        }
+        if (State.currentActiveBtn) {
+          State.currentActiveBtn.classList.remove('audio-active-btn');
+          const icon = State.currentActiveBtn.querySelector('i');
+          if (icon && State.currentActiveBtn._origIconClass) {
+            icon.className = State.currentActiveBtn._origIconClass;
+          }
+          State.currentActiveBtn = null;
+        }
+        State.currentPlayingText = null;
+        State.isSpeaking = false;
+        updateVoiceIndicator(false);
+        updateSlideAudioButtonState(false);
+      },
+
+      toggleSpeak: function(characterRole, text, btnElement = null, onComplete = null) {
+        if (State.isSpeaking && State.currentPlayingText === text) {
+          this.stopAll();
+          return;
+        }
+        this.stopAll();
+        State.currentPlayingText = text;
+        State.currentActiveBtn = btnElement;
+
+        if (btnElement) {
+          btnElement.classList.add('audio-active-btn');
+          const icon = btnElement.querySelector('i');
+          if (icon) {
+            btnElement._origIconClass = icon.className;
+            icon.className = 'fa-solid fa-volume-high fa-beat text-amber-300';
+          }
+        }
+
+        const handleDone = () => {
+          if (btnElement) {
+            btnElement.classList.remove('audio-active-btn');
+            const icon = btnElement.querySelector('i');
+            if (icon && btnElement._origIconClass) {
+              icon.className = btnElement._origIconClass;
+            }
+          }
+          if (State.currentPlayingText === text) {
+            State.currentPlayingText = null;
+            State.currentActiveBtn = null;
+          }
+          if (onComplete) onComplete();
+        };
+
+        this.speakCharacter(characterRole, text, handleDone);
+      },
+
+      getCharacterVoiceConfig: function(role) {
+        switch(role) {
+          case 'an':
+            return {
+              name: 'An (Học sinh)',
+              geminiVoice: 'Kore',
+              promptStyle: 'Nói bằng tiếng Việt giọng học sinh THCS miền Bắc chuẩn Hà Nội, ấm ức, bức xúc, tự nhiên: ',
+            };
+          case 'hoang':
+            return {
+              name: 'Hoàng (Học sinh)',
+              geminiVoice: 'Fenrir',
+              promptStyle: 'Nói bằng tiếng Việt giọng nam sinh THCS miền Bắc chuẩn Hà Nội, tự ái, gắt gỏng, tự nhiên: ',
+            };
+          case 'minh':
+            return {
+              name: 'Minh (Học sinh 8A)',
+              geminiVoice: 'Zephyr',
+              promptStyle: 'Nói bằng tiếng Việt giọng nam sinh miền Bắc chuẩn Hà Nội, điềm tĩnh, suy nghĩ thấu đáo: ',
+            };
+          case 'teacher':
+            return {
+              name: 'Cô giáo Nguyễn Thị Hiền',
+              geminiVoice: 'Sulafat',
+              promptStyle: 'Nói bằng tiếng Việt giọng nữ giáo viên Hà Nội, ấm áp, điềm đạm, mô phạm, truyền cảm: ',
+            };
+          case 'crowd':
+            return {
+              name: 'Đám đông bạn học',
+              geminiVoice: 'Puck',
+              promptStyle: 'Nói bằng tiếng Việt giọng nhóm học sinh xôn xao giục giã ở hành lang trường học: ',
+            };
+          default:
+            return {
+              name: 'Người dẫn chuyện',
+              geminiVoice: 'Aoede',
+              promptStyle: 'Đọc bằng tiếng Việt giọng nữ miền Bắc chuẩn Hà Nội, chuyên nghiệp, truyền cảm, nhịp vừa phải: ',
+            };
+        }
+      },
+
+      base64ToArrayBuffer: function(base64) {
+        const cleanBase64 = base64.replace(/\s/g, '').replace(/-/g, '+').replace(/_/g, '/');
+        const binaryString = window.atob(cleanBase64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes.buffer;
+      },
+
+      writeString: function(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      },
+
+      pcmToWav: function(pcm16, sampleRate = 24000) {
+        const numChannels = 1;
+        const bytesPerSample = 2;
+        const blockAlign = numChannels * bytesPerSample;
+        const byteRate = sampleRate * blockAlign;
+        const dataByteLength = pcm16.length * bytesPerSample;
+        const buffer = new ArrayBuffer(44 + dataByteLength);
+        const view = new DataView(buffer);
+
+        this.writeString(view, 0, 'RIFF');
+        view.setUint32(4, 36 + dataByteLength, true);
+        this.writeString(view, 8, 'WAVE');
+        this.writeString(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, numChannels, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, byteRate, true);
+        view.setUint16(32, blockAlign, true);
+        view.setUint16(34, 16, true);
+        this.writeString(view, 36, 'data');
+        view.setUint32(40, dataByteLength, true);
+
+        const outPcm = new Int16Array(buffer, 44, pcm16.length);
+        outPcm.set(pcm16);
+        return new Blob([buffer], { type: 'audio/wav' });
+      },
+
+      speakCharacter: async function(characterRole, text, onComplete = null) {
+        this.stopAll();
+        SoundEngine.init();
+        const currentSpeechId = State.speechId;
+        State.currentPlayingText = text;
+        const config = this.getCharacterVoiceConfig(characterRole);
+        showNarratorText(`[${config.name}]: “${text}”`);
+
+        if (!State.soundEnabled) {
+          if (onComplete) onComplete();
+          return;
+        }
+
+        const apiKey = (State.apiKey || "").trim().replace(/['"`\s]/g, '');
+        if (apiKey) {
+          try {
+            updateVoiceIndicator(true, `Gemini: ${config.name}...`);
+            await this.callGeminiTTSWithRetry(text, characterRole, () => {
+              if (State.speechId === currentSpeechId && onComplete) onComplete();
+            }, currentSpeechId);
+            return;
+          } catch (err) {
+            console.warn("Lỗi Gemini TTS, tự động chuyển giọng đọc tiếng Việt của thiết bị:", err.message);
+            this.speakBrowserFallback(characterRole, text, onComplete, currentSpeechId);
+            return;
+          }
+        }
+
+        // Tự động phát âm thanh chuẩn tiếng Việt bằng trình duyệt nếu chưa có API Key
+        this.speakBrowserFallback(characterRole, text, onComplete, currentSpeechId);
+      },
+
+      speakBrowserFallback: function(role, text, onComplete, speechId) {
+        if (!window.speechSynthesis) {
+          if (onComplete) onComplete();
+          return;
+        }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'vi-VN';
+        const voices = window.speechSynthesis.getVoices();
+        const viVoice = voices.find(v => v.lang && (v.lang.includes('vi') || v.lang.includes('VI')));
+        if (viVoice) utterance.voice = viVoice;
+
+        if (role === 'an') { utterance.pitch = 1.25; utterance.rate = 1.05; }
+        else if (role === 'hoang') { utterance.pitch = 0.9; utterance.rate = 1.0; }
+        else if (role === 'minh') { utterance.pitch = 1.0; utterance.rate = 0.98; }
+        else if (role === 'teacher') { utterance.pitch = 1.1; utterance.rate = 0.92; }
+        else if (role === 'crowd') { utterance.pitch = 1.15; utterance.rate = 1.1; }
+        else { utterance.pitch = 1.05; utterance.rate = 0.96; }
+
+        utterance.onstart = () => {
+          State.isSpeaking = true;
+          updateVoiceIndicator(true, `${this.getCharacterVoiceConfig(role).name}`);
+        };
+        utterance.onend = () => {
+          State.isSpeaking = false;
+          updateVoiceIndicator(false);
+          if (onComplete && (!speechId || State.speechId === speechId)) onComplete();
+        };
+        utterance.onerror = () => {
+          State.isSpeaking = false;
+          updateVoiceIndicator(false);
+          if (onComplete && (!speechId || State.speechId === speechId)) onComplete();
+        };
+        window.speechSynthesis.speak(utterance);
+      },
+
+      speak: async function(text, role = 'narrator', onComplete = null) {
+        return this.speakCharacter(role, text, onComplete);
+      },
+
+      callGeminiTTSWithRetry: async function(text, role, onComplete = null, speechId = null, maxRetries = 2) {
+        let delay = 1000;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+          try {
+            await this.callGeminiTTS(text, role, onComplete, speechId);
+            return;
+          } catch (err) {
+            if (attempt === maxRetries || State.speechId !== speechId) throw err;
+            await new Promise(r => setTimeout(r, delay));
+            delay *= 2;
+          }
+        }
+      },
+
+      callGeminiTTS: async function(text, role, onComplete = null, speechId = null) {
+        const currentId = speechId || State.speechId;
+        const cacheKey = `${role}_${text}`;
+
+        if (State.audioCache[cacheKey]) {
+          if (State.speechId === currentId) {
+            this.playAudioBlob(State.audioCache[cacheKey], onComplete, currentId);
+          }
+          return;
+        }
+
+        State.currentAbortController = new AbortController();
+        const config = this.getCharacterVoiceConfig(role);
+        const apiKey = (State.apiKey || "").trim().replace(/['"`\s]/g, '');
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+        const payload = {
+          contents: [{
+            parts: [{ text: `${config.promptStyle}"${text}"` }]
+          }],
+          generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: { voiceName: config.geminiVoice }
+              }
+            }
+          },
+          model: "gemini-2.5-flash-preview-tts"
+        };
+
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: State.currentAbortController.signal
+        });
+
+        if (State.speechId !== currentId) return;
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error?.message || `HTTP ${response.status}`);
+        }
+
+        const result = await response.json();
+        const part = result?.candidates?.[0]?.content?.parts?.[0];
+        const audioBase64 = part?.inlineData?.data;
+        const mimeType = part?.inlineData?.mimeType || 'audio/L16;rate=24000';
+
+        if (!audioBase64) throw new Error("Dữ liệu âm thanh phản hồi trống");
+
+        const rateMatch = mimeType.match(/rate=(\d+)/);
+        const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+        const pcmArrayBuffer = this.base64ToArrayBuffer(audioBase64);
+        const sampleCount = Math.floor(pcmArrayBuffer.byteLength / 2);
+        const pcm16 = new Int16Array(pcmArrayBuffer, 0, sampleCount);
+
+        const wavBlob = this.pcmToWav(pcm16, sampleRate);
+        State.audioCache[cacheKey] = wavBlob;
+
+        if (State.speechId === currentId) {
+          this.playAudioBlob(wavBlob, onComplete, currentId);
+        }
+      },
+
+      playAudioBlob: function(wavBlob, onComplete = null, speechId = null) {
+        if (speechId && State.speechId !== speechId) return;
+        SoundEngine.init();
+
+        const audioUrl = URL.createObjectURL(wavBlob);
+        const audio = new Audio(audioUrl);
+        State.currentHtmlAudio = audio;
+
+        audio.onplay = () => {
+          State.isSpeaking = true;
+          updateVoiceIndicator(true, "Gemini Voice");
+        };
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+          if (State.currentHtmlAudio === audio) {
+            State.currentHtmlAudio = null;
+            State.isSpeaking = false;
+            updateVoiceIndicator(false);
+          }
+          if (onComplete && (!speechId || State.speechId === speechId)) onComplete();
+        };
+        audio.onerror = () => {
+          URL.revokeObjectURL(audioUrl);
+          if (State.currentHtmlAudio === audio) {
+            State.currentHtmlAudio = null;
+            State.isSpeaking = false;
+            updateVoiceIndicator(false);
+          }
+          if (onComplete && (!speechId || State.speechId === speechId)) onComplete();
+        };
+
+        audio.play().catch(() => {
+          if (State.audioContext) {
+            wavBlob.arrayBuffer().then(buf => {
+              State.audioContext.decodeAudioData(buf, decoded => {
+                const src = State.audioContext.createBufferSource();
+                src.buffer = decoded;
+                src.connect(State.audioContext.destination);
+                State.currentAudioSource = src;
+                src.onended = () => {
+                  State.isSpeaking = false;
+                  updateVoiceIndicator(false);
+                  if (onComplete && (!speechId || State.speechId === speechId)) onComplete();
+                };
+                src.start(0);
+                State.isSpeaking = true;
+                updateVoiceIndicator(true, "Gemini Voice");
+              });
+            });
+          }
+        });
+      }
+    };
+
+    function showNarratorText(text) {
+      const banner = document.getElementById('narrator-overlay');
+      const p = document.getElementById('narrator-text');
+      if (!banner || !p) return;
+      p.textContent = text;
+      banner.classList.remove('opacity-0', 'translate-y-3');
+      banner.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(banner.hideTimeout);
+      banner.hideTimeout = setTimeout(() => {
+        banner.classList.remove('opacity-100', 'translate-y-0');
+        banner.classList.add('opacity-0', 'translate-y-3');
+      }, Math.max(4500, text.length * 80));
+    }
+
+    function updateVoiceIndicator(loading, label = '') {
+      const text = document.getElementById('ai-voice-status-text');
+      if (!text) return;
+      if (loading) {
+        text.innerHTML = `<i class="fa-solid fa-waveform-lines fa-fade text-amber-400"></i> ${label || "Gemini TTS..."}`;
+      } else {
+        text.textContent = "Giọng Gemini TTS";
+      }
+    }
+
+    /* ==========================================================================
+       VECTOR SVG CHARACTER MODELS
+       ========================================================================== */
+    const CharacterSVGs = {
+      minh: function(expression = 'hesitant', size = 'w-full h-full') {
+        const eyeBrow = expression === 'determined' ? 'M35,38 L45,40 M65,40 L55,38' : 'M36,37 L46,42 M64,37 L54,42';
+        const mouth = expression === 'determined' ? 'M42,65 Q50,68 58,65' : 'M44,66 Q50,63 56,66';
+        return `
+          <svg class="${size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="#0369a1" fill-opacity="0.15" stroke="#38bdf8" stroke-width="1.5"/>
+            <path d="M22,96 Q25,75 50,75 Q75,75 78,96 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+            <path d="M50,75 L50,96" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,2"/>
+            <path d="M46,75 L54,75 L52,90 L48,90 Z" fill="#ef4444"/>
+            <rect x="29" y="82" width="7" height="5" rx="1" fill="#0284c7"/>
+            <circle cx="32.5" cy="84.5" r="1.2" fill="#fef08a"/>
+            <rect x="44" y="66" width="12" height="11" rx="2" fill="#fed7aa"/>
+            <ellipse cx="50" cy="50" rx="19" ry="21" fill="#ffedd5"/>
+            <circle cx="31" cy="51" r="3.5" fill="#fed7aa"/>
+            <circle cx="69" cy="51" r="3.5" fill="#fed7aa"/>
+            <circle cx="41" cy="48" r="2.8" fill="#1e293b"/>
+            <circle cx="42" cy="47" r="0.9" fill="#ffffff"/>
+            <circle cx="59" cy="48" r="2.8" fill="#1e293b"/>
+            <circle cx="60" cy="47" r="0.9" fill="#ffffff"/>
+            <path d="${eyeBrow}" stroke="#475569" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M50,52 L48,58 L52,58" stroke="#f97316" stroke-width="1" stroke-linecap="round"/>
+            <path d="${mouth}" stroke="#334155" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M30,46 C28,32 37,24 50,24 C63,24 72,32 70,46 C67,37 63,33 50,33 C37,33 33,38 30,46 Z" fill="#1e293b"/>
+          </svg>
+        `;
+      },
+
+      an: function(size = 'w-full h-full') {
+        return `
+          <svg class="${size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="#e11d48" fill-opacity="0.15" stroke="#fb7185" stroke-width="1.5"/>
+            <path d="M22,96 Q26,75 50,75 Q74,75 78,96 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+            <path d="M47,75 L53,75 L52,88 L48,88 Z" fill="#1e3a8a"/>
+            <rect x="64" y="82" width="7" height="5" rx="1" fill="#e11d48"/>
+            <rect x="44" y="66" width="12" height="11" rx="2" fill="#fed7aa"/>
+            <ellipse cx="50" cy="50" rx="18.5" ry="20.5" fill="#fed7aa"/>
+            <circle cx="31.5" cy="50" r="3.2" fill="#fbcfe8"/>
+            <circle cx="68.5" cy="50" r="3.2" fill="#fbcfe8"/>
+            <circle cx="41" cy="48" r="2.5" fill="#0f172a"/>
+            <circle cx="41.8" cy="47.2" r="0.8" fill="#ffffff"/>
+            <circle cx="59" cy="48" r="2.5" fill="#0f172a"/>
+            <circle cx="59.8" cy="47.2" r="0.8" fill="#ffffff"/>
+            <path d="M36,44 L46,40 M64,44 L54,40" stroke="#0f172a" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M50,51 L48,57 L52,57" stroke="#ea580c" stroke-width="1"/>
+            <ellipse cx="50" cy="65" rx="4" ry="3" fill="#be123c"/>
+            <path d="M31,47 C28,32 38,24 50,24 C62,24 71,31 69,47 C65,36 59,32 50,32 C40,32 34,38 31,47 Z" fill="#0f172a"/>
+          </svg>
+        `;
+      },
+
+      hoang: function(size = 'w-full h-full') {
+        return `
+          <svg class="${size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="#d97706" fill-opacity="0.15" stroke="#fbbf24" stroke-width="1.5"/>
+            <path d="M22,96 Q25,75 50,75 Q75,75 78,96 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+            <path d="M47,75 L53,75 L51,89 L49,89 Z" fill="#d97706"/>
+            <rect x="29" y="82" width="7" height="5" rx="1" fill="#b45309"/>
+            <rect x="44" y="66" width="12" height="11" rx="2" fill="#fcd34d" fill-opacity="0.7"/>
+            <ellipse cx="50" cy="49.5" rx="19" ry="21" fill="#fef08a" fill-opacity="0.8"/>
+            <path d="M38,48 Q42,46 45,49" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M55,49 Q58,46 62,48" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M37,42 L47,44 M63,42 L53,44" stroke="#78350f" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M43,65 L57,65" stroke="#78350f" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M29,43 L32,32 L38,36 L43,26 L50,33 L57,25 L61,35 L68,31 L71,44 C67,34 58,31 50,31 C40,31 34,36 29,43 Z" fill="#1c1917"/>
+          </svg>
+        `;
+      },
+
+      teacher: function(size = 'w-full h-full') {
+        return `
+          <svg class="${size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="#059669" fill-opacity="0.15" stroke="#34d399" stroke-width="1.5"/>
+            <path d="M22,96 Q27,74 50,74 Q73,74 78,96 Z" fill="#047857"/>
+            <path d="M43,68 C43,65 57,65 57,68 L55,75 L45,75 Z" fill="#065f46" stroke="#a7f3d0" stroke-width="0.75"/>
+            <circle cx="50" cy="79" r="2.2" fill="#ecfdf5" stroke="#059669" stroke-width="1"/>
+            <rect x="45" y="63" width="10" height="9" fill="#ffedd5"/>
+            <ellipse cx="50" cy="48" rx="17.5" ry="19.5" fill="#fff7ed"/>
+            <circle cx="43" cy="48" r="1.3" fill="#0f172a"/>
+            <circle cx="57" cy="48" r="1.3" fill="#0f172a"/>
+            <path d="M38,42 Q43,40 47,42" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M53,42 Q57,40 62,42" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M44,61 Q50,67 56,61" stroke="#be123c" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M29,48 C27,30 38,20 50,20 C62,20 73,30 71,48 C67,32 60,28 50,28 C40,28 33,32 29,48 Z" fill="#0f172a"/>
+            <circle cx="50" cy="20" r="7" fill="#0f172a"/>
+          </svg>
+        `;
+      },
+
+      crowd: function(size = 'w-full h-full') {
+        return `
+          <svg class="${size}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="48" fill="#475569" fill-opacity="0.2" stroke="#94a3b8" stroke-width="1.5"/>
+            <circle cx="28" cy="46" r="11" fill="#fed7aa"/>
+            <path d="M12,85 Q16,65 28,65 Q40,65 44,85 Z" fill="#e2e8f0"/>
+            <circle cx="72" cy="46" r="11" fill="#fed7aa"/>
+            <path d="M56,85 Q60,65 72,65 Q84,65 88,85 Z" fill="#e2e8f0"/>
+            <rect x="74" y="32" width="12" height="18" rx="2" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+            <circle cx="80" cy="35" r="1.5" fill="#ef4444"/>
+            <circle cx="50" cy="42" r="13" fill="#ffedd5"/>
+            <path d="M30,90 Q34,68 50,68 Q66,68 70,90 Z" fill="#ffffff" stroke="#cbd5e1"/>
+          </svg>
+        `;
+      }
+    };
+
+    function openCharacterModal() {
+      const modal = document.getElementById('character-roster-modal');
+      if (!modal) return;
+      document.getElementById('roster-avatar-minh').innerHTML = CharacterSVGs.minh('hesitant');
+      document.getElementById('roster-avatar-an').innerHTML = CharacterSVGs.an();
+      document.getElementById('roster-avatar-hoang').innerHTML = CharacterSVGs.hoang();
+      document.getElementById('roster-avatar-teacher').innerHTML = CharacterSVGs.teacher();
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100');
+    }
+
+    function closeCharacterModal() {
+      const modal = document.getElementById('character-roster-modal');
+      if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+      }
+    }
+
+
+    /* ==========================================================================
+       CURATED SLIDE AUDIO SCRIPTS & AUDIO CONTROLLER
+       ========================================================================== */
+    const SlideAudioScripts = {
+      opening: {
+        role: 'narrator',
+        text: "Trường Trung học cơ sở Thực hành Sư phạm Lý Tự Trọng. Tổ chuyên môn: Lịch sử, Địa lí, Giáo dục công dân. Giáo viên trình bày: Nguyễn Thị Hiền. Báo cáo tham luận: Giải pháp giáo dục đạo đức và ý thức thượng tôn pháp luật cho học sinh trong xây dựng trường học an toàn, hạnh phúc. Thông qua mô phỏng tương tác điện ảnh: 30 Giây Ở Hành Lang. Một lựa chọn có thể thay đổi cả câu chuyện."
+      },
+      scene1: {
+        role: 'narrator',
+        text: "Giờ ra chơi tại hành lang trường học. An và Hoàng bắt đầu to tiếng vì mâu thuẫn trên mạng xã hội. Đám đông bạn học vây quanh giục quay clip phát tán. Đúng lúc đó, Minh vừa bước tới với chiếc điện thoại trên tay."
+      },
+      countdown: {
+        role: 'narrator',
+        text: "Thời khắc quyết định: Đồng hồ 30 giây bắt đầu đếm. Nếu là Minh, em sẽ lựa chọn điều gì? Phương án A: Bỏ đi vì nghĩ không liên quan. Phương án B: Lấy điện thoại quay clip. Phương án C: Tự mình can ngăn. Hay Phương án D: Tìm thầy cô và người lớn hỗ trợ."
+      },
+      branchA: {
+        role: 'narrator',
+        text: "Nhánh diễn biến A: Bỏ đi. Minh không trực tiếp gây ra mâu thuẫn, nhưng đã bỏ lỡ cơ hội vàng để ngăn chặn bạo lực. Khi người chứng kiến im lặng quay lưng, mâu thuẫn không tự tắt mà tiếp tục bùng phát dữ dội hơn. Không làm điều xấu liệu đã đủ chưa?"
+      },
+      branchB: {
+        role: 'narrator',
+        text: "Nhánh diễn biến B: Quay phim và đăng tải. Một người chứng kiến có thể trở thành một phần của vấn đề chỉ bằng một cú nhấn nút. Luật Trẻ em và Luật An ninh mạng nghiêm cấm việc đăng tải thông tin, hình ảnh đời tư xúc phạm danh dự, nhân phẩm học sinh."
+      },
+      branchC: {
+        role: 'narrator',
+        text: "Nhánh diễn biến C: Tự mình can ngăn. Ý định của Minh rất tích cực, nhưng khi chưa có kỹ năng hòa giải chuyên sâu, việc một mình can thiệp có thể đẩy bản thân vào nguy cơ mất an toàn. Nhận ra giới hạn và tìm kiếm sự hỗ trợ là giải pháp đúng đắn."
+      },
+      branchD: {
+        role: 'narrator',
+        text: "Nhánh diễn biến D: Tìm kiếm hỗ trợ kịp thời. Minh dứt khoát hạ điện thoại xuống và chạy đi báo cô giáo. Cô giáo Nguyễn Thị Hiền kịp thời có mặt, tháo gỡ mâu thuẫn trong sự tôn trọng. An toàn là biết tìm đúng người và đúng nơi hỗ trợ."
+      },
+      gap_analysis: {
+        role: 'narrator',
+        text: "Trọng tâm tham luận: Biết đúng khác với Làm đúng. Hầu hết học sinh đều biết không nên cổ vũ mâu thuẫn, nhưng khoảng cách giữa hiểu lý thuyết và hành động thực tế khi bị bạn bè kích động chính là khoảng trống giáo dục cần lấp đầy."
+      },
+      habit_ladder: {
+        role: 'narrator',
+        text: "Mô hình 4 nấc thang chuyển hóa hành vi: Bậc 1: Biết đúng. Bậc 2: Muốn làm đúng. Bậc 3: Biết cách làm đúng. Bậc 4: Hình thành thói quen đúng, biến nhận thức thành phản xạ tự nhiên của học sinh."
+      },
+      model_3L: {
+        role: 'narrator',
+        text: "Khung lý thuyết 3L: Luật pháp xác lập giới hạn, Lựa chọn tạo ra an toàn và Lan tỏa kiến tạo văn hóa học đường. Luật pháp phải chuyển hóa thành năng lực lựa chọn của từng cá nhân và lan tỏa thành văn hóa chung của cả tập thể."
+      },
+      decision_matrix: {
+        role: 'narrator',
+        text: "Công thức 4 bước trong 30 giây: Bước 1: Dừng lại. Bước 2: Suy nghĩ về hậu quả. Bước 3: Lựa chọn giải pháp an toàn. Bước 4: Chịu trách nhiệm bảo vệ không gian trường học an toàn và lành mạnh."
+      },
+      ai_socratic: {
+        role: 'narrator',
+        text: "Mô phỏng trợ lý AI gợi mở tình huống theo phương pháp Socrates. AI đóng vai trò như chiếc gương phản chiếu để người học tự nhận diện động cơ và hậu quả hành vi, khơi mở tư duy phản tư đạo đức."
+      },
+      minh_reprise: {
+        role: 'narrator',
+        text: "Tái hiện cao trào: 30 giây ở hành lang. Tình huống không thay đổi, nhưng Minh đã làm chủ quy trình: Dừng lại, suy nghĩ và chọn gọi cô giáo. Cô giáo Nguyễn Thị Hiền kịp thời có mặt, hành lang trở lại bình yên, không ai bị tổn thương."
+      },
+      final_climax: {
+        role: 'narrator',
+        text: "Đỉnh cao thông điệp tham luận: Tình huống không hề thay đổi, điều thay đổi chính là năng lực lựa chọn của Minh. Hiểu điều đúng, chọn điều đúng, làm điều đúng và lan tỏa điều đúng để xây dựng trường học hạnh phúc."
+      },
+      epilogue: {
+        role: 'narrator',
+        text: "Lời kết tham luận của giáo viên Nguyễn Thị Hiền: Một trường học an toàn không phải là nơi không bao giờ xảy ra vấn đề; mà là nơi khi vấn đề xảy ra, mỗi học sinh đều biết mình cần lựa chọn điều gì."
+      }
+    };
+
+    function updateSlideAudioButtonState(isPlaying) {
+      const btn = document.getElementById('btn-read-slide');
+      const icon = document.getElementById('slide-audio-icon');
+      const txt = document.getElementById('slide-audio-text');
+      if (btn && icon && txt) {
+        if (isPlaying) {
+          btn.classList.add('audio-active-btn', 'ring-2', 'ring-amber-400');
+          icon.className = 'fa-solid fa-circle-stop text-rose-400 animate-pulse';
+          txt.textContent = 'Dừng đọc';
+        } else {
+          btn.classList.remove('audio-active-btn', 'ring-2', 'ring-amber-400');
+          icon.className = 'fa-solid fa-volume-high text-amber-400';
+          txt.textContent = 'Đọc slide này';
+        }
+      }
+
+      document.querySelectorAll('.btn-slide-audio').forEach(b => {
+        const bIcon = b.querySelector('i');
+        const bTxt = b.querySelector('span');
+        if (isPlaying) {
+          b.classList.add('audio-active-btn', 'ring-2', 'ring-amber-400');
+          if (bIcon) bIcon.className = 'fa-solid fa-circle-stop text-rose-400 animate-pulse';
+          if (bTxt) bTxt.textContent = 'Dừng đọc';
+        } else {
+          b.classList.remove('audio-active-btn', 'ring-2', 'ring-amber-400');
+          if (bIcon) bIcon.className = 'fa-solid fa-volume-high text-sky-400';
+          if (bTxt) {
+            bTxt.textContent = (State.currentScene === 'epilogue') ? 'Đọc lời kết' : 
+                               (State.currentScene === 'scene1') ? 'Đọc lời dẫn cảnh' : 'Đọc toàn slide';
+          }
+        }
+      });
+    }
+
+    function toggleCurrentSlideVoice() {
+      const script = SlideAudioScripts[State.currentScene];
+      if (!script) return;
+
+      if (State.isSpeaking && State.currentPlayingText === script.text) {
+        SpeechService.stopAll();
+        return;
+      }
+
+      SpeechService.stopAll();
+      if (State.currentScene === 'branchD' || State.currentScene === 'final_climax') {
+        SoundEngine.playPeaceChime();
+      }
+      updateSlideAudioButtonState(true);
+      SpeechService.speakCharacter(script.role, script.text, () => {
+        updateSlideAudioButtonState(false);
+      });
+    }
+
+
+    /* ==========================================================================
+       SCENES CHOREOGRAPHY & STORY TEMPLATES (WITH INTEGRATED AUDIO BUTTONS)
+       ========================================================================== */
+    const Scenes = {
+      
+      // 1. MÀN HÌNH MỞ ĐẦU
+      opening: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-7 md:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 text-white scene-fade-in overflow-y-auto">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-900/25 via-slate-950/40 to-transparent pointer-events-none"></div>
+            
+            <!-- TOP BAR: School & Department Identity + Slide Audio -->
+            <div class="relative z-10 flex flex-wrap items-center justify-between gap-3 border-b border-sky-500/20 pb-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-amber-400 p-0.5 shadow-lg flex items-center justify-center shrink-0">
+                  <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                    <i class="fa-solid fa-graduation-cap text-amber-400 text-lg"></i>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs sm:text-sm font-black uppercase tracking-wider text-sky-200">TRƯỜNG THCS THSP LÝ TỰ TRỌNG</span>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Trường Trung học cơ sở Thực hành Sư phạm Lý Tự Trọng. Tổ chuyên môn: Lịch sử, Địa lí, Giáo dục công dân.', this)" class="audio-btn p-1 rounded hover:bg-slate-800 text-sky-400 text-xs transition" title="Nghe thông tin đơn vị"><i class="fa-solid fa-volume-high"></i></button>
+                  </div>
+                  <p class="text-[11px] sm:text-xs font-semibold text-amber-300 tracking-wide uppercase">Tổ chuyên môn: Lịch sử – Địa lí – GDCD</p>
+                </div>
+              </div>
+
+              <!-- Top Right Slide Audio -->
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- MAIN CONTENT AREA -->
+            <div class="relative z-10 max-w-4xl mx-auto w-full my-auto space-y-4 sm:space-y-5 text-center py-2">
+              
+              <!-- Tag / Category Badge -->
+              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 via-sky-500/20 to-amber-500/20 border border-amber-400/40 text-amber-300 text-xs sm:text-sm font-bold uppercase tracking-widest shadow-inner">
+                <i class="fa-solid fa-award text-amber-400"></i>
+                <span>BÁO CÁO THAM LUẬN CHUYÊN ĐỀ SƯ PHẠM</span>
+              </div>
+
+              <!-- Main Tham Luận Title -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-center gap-3">
+                  <h1 class="text-xl sm:text-3xl md:text-4xl lg:text-[34px] font-black font-display text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-amber-300 tracking-tight leading-snug drop-shadow-md">
+                    “GIẢI PHÁP GIÁO DỤC ĐẠO ĐỨC VÀ Ý THỨC THƯỢNG TÔN PHÁP LUẬT CHO HỌC SINH TRONG XÂY DỰNG TRƯỜNG HỌC AN TOÀN, HẠNH PHÚC”
+                  </h1>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Báo cáo tham luận: Giải pháp giáo dục đạo đức và ý thức thượng tôn pháp luật cho học sinh trong xây dựng trường học an toàn, hạnh phúc.', this)" class="audio-btn shrink-0 w-8 h-8 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 flex items-center justify-center text-xs transition border border-amber-500/40 shadow" title="Nghe tên đề tài tham luận">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Two Feature Cards: Presenter & Interactive Simulation -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 max-w-3xl mx-auto pt-1 text-left">
+                <!-- Presenter Card -->
+                <div class="glass-dark p-3.5 sm:p-4 rounded-xl border border-amber-500/30 shadow-lg flex items-center justify-between space-x-3.5 hover:border-amber-400/60 transition">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-sky-600 text-white flex items-center justify-center font-bold text-lg shadow-md shrink-0">
+                      <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+                    <div>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400">Giáo viên trình bày</span>
+                      <h3 class="font-bold text-sm sm:text-base text-white">Nguyễn Thị Hiền</h3>
+                      <p class="text-[11px] text-slate-300">Tổ: Lịch sử – Địa lí – GDCD</p>
+                    </div>
+                  </div>
+                  <button onclick="SpeechService.toggleSpeak('teacher', 'Xin chào quý thầy cô và các đồng nghiệp. Tôi là Nguyễn Thị Hiền, giáo viên tổ Lịch sử, Địa lí, Giáo dục công dân, trường THCS Thực hành Sư phạm Lý Tự Trọng.', this)" class="audio-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 text-xs font-semibold flex items-center gap-1 border border-amber-500/40 transition" title="Nghe lời chào của Cô giáo Nguyễn Thị Hiền">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span class="hidden sm:inline">Lời chào</span>
+                  </button>
+                </div>
+
+                <!-- Simulation Info Card -->
+                <div class="glass-dark p-3.5 sm:p-4 rounded-xl border border-sky-500/30 shadow-lg flex items-center justify-between space-x-3.5 hover:border-sky-400/60 transition">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-600 to-amber-500 text-slate-950 flex items-center justify-center font-black text-sm shadow-md shrink-0">
+                      30s
+                    </div>
+                    <div>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">Tình huống thực nghiệm</span>
+                      <h3 class="font-bold text-sm sm:text-base text-white">30 Giây Ở Hành Lang</h3>
+                      <p class="text-[11px] text-amber-300 italic">“Một lựa chọn có thể thay đổi tất cả”</p>
+                    </div>
+                  </div>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Mô phỏng tương tác điện ảnh 30 Giây Ở Hành Lang: Một lựa chọn có thể thay đổi cả câu chuyện. Tình huống thực tế diễn ra trong giờ ra chơi tại một trường học.', this)" class="audio-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-600 text-sky-200 text-xs font-semibold flex items-center gap-1 border border-sky-400/40 transition" title="Nghe giới thiệu mô phỏng">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span class="hidden sm:inline">Nghe</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Start Button & Character Button -->
+              <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button onclick="startSimulation()" class="btn-cinema px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-sky-500 to-sky-600 hover:from-amber-400 hover:to-sky-500 text-slate-950 font-black text-xs sm:text-sm tracking-wide shadow-2xl flex items-center space-x-2.5 border border-amber-300/40">
+                  <span>BẮT ĐẦU BÁO CÁO & MÔ PHỎNG</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button onclick="openCharacterModal()" class="px-5 py-3 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-semibold border border-slate-700 transition flex items-center gap-2">
+                  <i class="fa-solid fa-users text-amber-400"></i> Tuyến nhân vật học đường
+                </button>
+              </div>
+
+            </div>
+
+            <!-- FOOTER INFO -->
+            <div class="relative z-10 flex flex-wrap items-center justify-between text-[11px] text-slate-400 pt-2.5 border-t border-slate-800/80">
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-shield-halved text-emerald-400"></i> Xây dựng trường học an toàn – kỷ cương – hạnh phúc
+              </span>
+              <span class="italic text-slate-400">Bấm [Bắt đầu] hoặc dùng phím Space / → để chuyển cảnh</span>
+            </div>
+          </div>
+        `;
+      },
+
+      // 2. CẢNH 1 – MÂU THUẪN BẮT ĐẦU
+      scene1: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-7 bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 text-white scene-fade-in">
+            <div class="relative z-10 flex items-center justify-between">
+              <span class="px-3 py-1 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> Giờ ra chơi – Hành lang trường học
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio text-xs text-sky-200 bg-sky-600/30 hover:bg-sky-600/50 px-3 py-1.5 rounded-lg border border-sky-400/40 flex items-center gap-1.5 shadow-md transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i> Đọc lời dẫn cảnh
+                </button>
+                <button onclick="playScene1DialogueFlow()" class="btn-cinema text-xs text-white bg-gradient-to-r from-sky-600 to-amber-600 hover:from-sky-500 hover:to-amber-500 px-3 py-1.5 rounded-lg border border-sky-400/40 flex items-center gap-1.5 shadow-md">
+                  <i class="fa-solid fa-circle-play text-amber-300"></i> Diễn hoạt thoại tự động
+                </button>
+              </div>
+            </div>
+
+            <!-- Dialogue Area -->
+            <div class="relative z-10 max-w-4xl mx-auto w-full my-auto space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                <!-- An Card -->
+                <div id="dialogue-card-an" class="glass-dark p-3.5 sm:p-4 rounded-xl border border-rose-500/40 shadow-lg flex items-start space-x-3.5">
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0">${CharacterSVGs.an()}</div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <h4 class="font-bold text-sm text-rose-300">AN (Lớp 8)</h4>
+                      <button onclick="SpeechService.toggleSpeak('an', 'Cậu nói xấu tôi trong nhóm lớp đúng không? Cậu còn nói thế à?', this)" class="audio-btn px-2.5 py-0.5 rounded bg-rose-600/30 hover:bg-rose-600 text-rose-200 text-[11px] flex items-center gap-1 transition" title="Nghe giọng An (ấm ức, bức xúc)">
+                        <i class="fa-solid fa-volume-high"></i> Nghe
+                      </button>
+                    </div>
+                    <p class="text-xs sm:text-sm font-medium text-white italic pl-2.5 border-l-2 border-rose-400 leading-relaxed">
+                      “Cậu nói xấu tôi trong nhóm lớp đúng không? Cậu còn nói thế à?”
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Hoang Card -->
+                <div id="dialogue-card-hoang" class="glass-dark p-3.5 sm:p-4 rounded-xl border border-amber-500/40 shadow-lg flex items-start space-x-3.5">
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0">${CharacterSVGs.hoang()}</div>
+                  <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                      <h4 class="font-bold text-sm text-amber-300">HOÀNG (Lớp 8)</h4>
+                      <button onclick="SpeechService.toggleSpeak('hoang', 'Tôi nói gì thì liên quan gì đến cậu? Tránh ra!', this)" class="audio-btn px-2.5 py-0.5 rounded bg-amber-600/30 hover:bg-amber-600 text-amber-200 text-[11px] flex items-center gap-1 transition" title="Nghe giọng Hoàng (tự ái, gắt gỏng)">
+                        <i class="fa-solid fa-volume-high"></i> Nghe
+                      </button>
+                    </div>
+                    <p class="text-xs sm:text-sm font-medium text-white italic pl-2.5 border-l-2 border-amber-400 leading-relaxed">
+                      “Tôi nói gì thì liên quan gì đến cậu? Tránh ra!”
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Crowd Bystanders -->
+              <div id="dialogue-card-crowd" class="glass-dark p-3 rounded-xl border border-slate-700 flex items-center justify-between gap-3 text-xs sm:text-sm">
+                <div class="flex items-center space-x-3 text-slate-300">
+                  <div class="w-9 h-9 shrink-0 hidden sm:block">${CharacterSVGs.crowd()}</div>
+                  <div>
+                    <span class="font-bold text-white">Đám đông:</span>
+                    <span class="text-amber-300 ml-1">“Có chuyện gì thế?”</span>
+                    <span class="text-slate-400 mx-1">|</span>
+                    <span class="text-rose-300">“Quay lại đi! Đăng lên nhóm lớp cho mọi người xem!”</span>
+                  </div>
+                </div>
+                <button onclick="SpeechService.toggleSpeak('crowd', 'Quay lại đi! Đăng lên nhóm lớp cho mọi người xem!', this)" class="audio-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 font-semibold text-xs border border-amber-500/40 transition" title="Nghe đám đông xôn xao giục giã">
+                  <i class="fa-solid fa-volume-high"></i> Nghe đám đông
+                </button>
+              </div>
+
+              <!-- Minh Arrives -->
+              <div id="dialogue-card-minh" class="p-3.5 sm:p-4 rounded-xl bg-sky-950/80 border-2 border-sky-400/70 shadow-2xl flex items-center justify-between gap-3">
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0">${CharacterSVGs.minh('hesitant')}</div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h3 class="font-bold text-sky-200 text-sm sm:text-base">MINH VỪA BƯỚC TỚI</h3>
+                      <span class="text-[10px] bg-sky-800/80 px-2 py-0.5 rounded text-sky-200">Đeo ba lô – Cầm điện thoại</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-white font-medium italic mt-1 leading-relaxed">
+                      Bạn học gọi lớn: “Minh! Quay lại đi! Nhanh!” – Minh bất giác rút điện thoại ra...
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button onclick="SpeechService.toggleSpeak('minh', 'Minh bất giác rút điện thoại ra... mình có nên quay không? Nếu mình cũng quay thì danh dự bạn bè sẽ ra sao?', this)" class="audio-btn px-3 py-2 rounded-lg bg-sky-600/40 hover:bg-sky-600 text-white text-xs font-semibold flex items-center gap-1.5 border border-sky-400/50 shadow transition" title="Nghe suy nghĩ của Minh (điềm tĩnh, suy nghĩ thấu đáo)">
+                    <i class="fa-solid fa-volume-high text-sky-300"></i>
+                    <span>Nghe Minh</span>
+                  </button>
+                  <button onclick="freezeSceneAtDecision()" class="btn-cinema px-4 sm:px-5 py-2.5 rounded-lg bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-xl flex items-center gap-2">
+                    <span>30 GIÂY LỰA CHỌN</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative z-10 flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800">
+              <span class="hidden sm:inline">Nhấp [Nghe] trên từng nhân vật hoặc chọn 'Đọc lời dẫn cảnh'</span>
+              <button onclick="freezeSceneAtDecision()" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 ml-auto">
+                <span>Tiếp tục đếm ngược</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 3. CẢNH 2 – 30 GIÂY ĐỂ LỰA CHỌN
+      countdown: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-7 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white scene-fade-in">
+            <div class="relative z-10 flex items-center justify-between border-b border-slate-800 pb-3">
+              <div class="flex items-center space-x-2">
+                <span class="w-3 h-3 rounded-full bg-rose-500 animate-ping"></span>
+                <span class="text-xs font-bold text-amber-300 uppercase tracking-widest">Thời khắc quyết định</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <div class="flex items-center space-x-2 bg-slate-900/90 px-4 py-1.5 rounded-xl border border-amber-500/50 shadow-lg">
+                  <i class="fa-solid fa-stopwatch text-amber-400 text-sm animate-pulse"></i>
+                  <span id="countdown-timer" class="font-mono text-lg sm:text-2xl font-black text-amber-300 tracking-wider">00:30</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 Options Grid -->
+            <div class="relative z-10 max-w-4xl mx-auto w-full my-auto space-y-4">
+              <div class="text-center space-y-1">
+                <div class="flex items-center justify-center gap-2">
+                  <h2 class="text-xl sm:text-3xl font-extrabold font-display text-white tracking-tight">
+                    NẾU LÀ MINH, EM SẼ LÀM GÌ?
+                  </h2>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'NẾU LÀ MINH, EM SẼ LÀM GÌ? Hãy nhấp chọn một phương án dưới đây. Mỗi lựa chọn sẽ dẫn câu chuyện sang một hướng khác nhau.', this)" class="audio-btn w-7 h-7 rounded-lg bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 flex items-center justify-center text-xs transition border border-sky-500/30 shadow-sm" title="Nghe câu hỏi">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300">
+                  Hãy nhấp chọn một phương án dưới đây. Mỗi lựa chọn sẽ dẫn câu chuyện sang một hướng khác nhau:
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div id="card-opt-A" onclick="selectDecision('A')" class="cursor-pointer p-3.5 sm:p-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700 hover:border-sky-400 transition flex items-start justify-between space-x-3 group shadow-md">
+                  <div class="flex items-start space-x-3">
+                    <span class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-sky-500 group-hover:text-slate-950 text-sky-400 font-bold text-sm flex items-center justify-center shrink-0 border border-slate-700 transition">A</span>
+                    <div>
+                      <h4 class="font-bold text-xs sm:text-sm text-white group-hover:text-sky-300">Bỏ đi vì chuyện không liên quan đến mình</h4>
+                      <p class="text-[11px] sm:text-xs text-slate-400 mt-1 leading-relaxed">Nghĩ rằng không phải mâu thuẫn của mình, tránh xa để không gặp rắc rối.</p>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Phương án A: Bỏ đi vì chuyện không liên quan đến mình. Nghĩ rằng không phải mâu thuẫn của mình, tránh xa để không gặp rắc rối.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-sky-600 text-sky-300 hover:text-white text-xs transition shrink-0 border border-slate-700" title="Nghe phương án A">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+
+                <div id="card-opt-B" onclick="selectDecision('B')" class="cursor-pointer p-3.5 sm:p-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700 hover:border-rose-400 transition flex items-start justify-between space-x-3 group shadow-md">
+                  <div class="flex items-start space-x-3">
+                    <span class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-rose-500 group-hover:text-white text-rose-400 font-bold text-sm flex items-center justify-center shrink-0 border border-slate-700 transition">B</span>
+                    <div>
+                      <h4 class="font-bold text-xs sm:text-sm text-white group-hover:text-rose-300">Lấy điện thoại quay lại sự việc</h4>
+                      <p class="text-[11px] sm:text-xs text-slate-400 mt-1 leading-relaxed">Nghe theo lời giục của nhóm bạn xung quanh, giơ máy quay để đăng lên nhóm.</p>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Phương án B: Lấy điện thoại quay lại sự việc. Nghe theo lời giục của nhóm bạn xung quanh, giơ máy quay để đăng lên nhóm.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-rose-300 hover:text-white text-xs transition shrink-0 border border-slate-700" title="Nghe phương án B">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+
+                <div id="card-opt-C" onclick="selectDecision('C')" class="cursor-pointer p-3.5 sm:p-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700 hover:border-amber-400 transition flex items-start justify-between space-x-3 group shadow-md">
+                  <div class="flex items-start space-x-3">
+                    <span class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-amber-500 group-hover:text-slate-950 text-amber-400 font-bold text-sm flex items-center justify-center shrink-0 border border-slate-700 transition">C</span>
+                    <div>
+                      <h4 class="font-bold text-xs sm:text-sm text-white group-hover:text-amber-300">Tiến tới giúp hai bạn bình tĩnh</h4>
+                      <p class="text-[11px] sm:text-xs text-slate-400 mt-1 leading-relaxed">Tự mình bước vào giữa cuộc tranh cãi để can ngăn An và Hoàng dừng cãi vã.</p>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Phương án C: Tiến tới giúp hai bạn bình tĩnh. Tự mình bước vào giữa cuộc tranh cãi để can ngăn An và Hoàng dừng cãi vã.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition shrink-0 border border-slate-700" title="Nghe phương án C">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+
+                <div id="card-opt-D" onclick="selectDecision('D')" class="cursor-pointer p-3.5 sm:p-4 rounded-xl bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-700 hover:border-emerald-400 transition flex items-start justify-between space-x-3 group shadow-md">
+                  <div class="flex items-start space-x-3">
+                    <span class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-emerald-500 group-hover:text-slate-950 text-emerald-400 font-bold text-sm flex items-center justify-center shrink-0 border border-slate-700 transition">D</span>
+                    <div>
+                      <h4 class="font-bold text-xs sm:text-sm text-white group-hover:text-emerald-300">Tìm thầy cô hoặc người lớn hỗ trợ</h4>
+                      <p class="text-[11px] sm:text-xs text-slate-400 mt-1 leading-relaxed">Hạ điện thoại xuống, dặn bạn bè không quay và nhanh chóng tìm giáo viên.</p>
+                    </div>
+                  </div>
+                  <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Phương án D: Tìm thầy cô hoặc người lớn hỗ trợ. Hạ điện thoại xuống, dặn bạn bè không quay và nhanh chóng tìm giáo viên.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs transition shrink-0 border border-slate-700" title="Nghe phương án D">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Preview confirmation banner -->
+              <div id="choice-confirmation-box" class="p-3 rounded-xl bg-slate-900/95 border border-sky-500/40 flex items-center justify-between gap-3 text-xs opacity-0 transform translate-y-3 transition-all duration-300 shadow-xl">
+                <div class="flex items-center space-x-2 text-sky-200">
+                  <i class="fa-solid fa-lightbulb text-amber-400 text-sm"></i>
+                  <span id="choice-preview-text" class="font-medium">Lựa chọn của bạn sẽ tạo ra một diễn biến khác.</span>
+                </div>
+                <button onclick="executeBranchAnalysis()" class="btn-cinema shrink-0 px-4 py-2 rounded-lg bg-gradient-to-r from-amber-400 to-sky-500 text-slate-950 font-bold text-xs shadow-md">
+                  XEM ĐIỀU GÌ XẢY RA <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="relative z-10 flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
+              <button onclick="goToScene('scene1')" class="hover:text-white flex items-center gap-1">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại cảnh trước
+              </button>
+              <span class="italic text-[11px]">Không có đúng/sai áp đặt – Hướng tới tư duy phản tư</span>
+            </div>
+          </div>
+        `;
+      },
+
+      // 4. NHÁNH A – BỎ ĐI
+      branchA: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-person-walking-arrow-right"></i> Nhánh diễn biến A: Bỏ Đi
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-slate-400 hidden sm:inline">Thái độ thờ ơ & ranh giới của sự vô can</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto space-y-4">
+              <div class="p-4 rounded-xl glass-dark border border-slate-700 flex items-center justify-between space-x-4">
+                <div class="flex items-center space-x-4">
+                  <div class="w-16 h-16 shrink-0">${CharacterSVGs.minh('hesitant')}</div>
+                  <div class="space-y-1">
+                    <h4 class="font-bold text-sm text-slate-200">Minh nhìn hai bạn một lát rồi quay lưng bước đi...</h4>
+                    <p class="text-xs text-slate-400 italic">
+                      Phía sau hành lang, tiếng hò reo vẫn tiếp tục vang lên: <span class="text-amber-300">“Đánh đi! Quay đi!”</span>. Hai bạn xô đẩy ngày một mạnh hơn khi không có người can thiệp.
+                    </p>
+                  </div>
+                </div>
+                <button onclick="SpeechService.toggleSpeak('narrator', 'Minh nhìn hai bạn một lát rồi quay lưng bước đi. Phía sau hành lang, tiếng hò reo vẫn tiếp tục vang lên: Đánh đi, Quay đi! Hai bạn xô đẩy ngày một mạnh hơn khi không có người can thiệp.', this)" class="audio-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs flex items-center gap-1 border border-slate-700 transition" title="Nghe diễn biến này">
+                  <i class="fa-solid fa-volume-high"></i> <span>Nghe</span>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-bold text-sm text-sky-300">Minh không trực tiếp tạo ra mâu thuẫn</h4>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Minh không trực tiếp tạo ra mâu thuẫn. Minh không xúc phạm ai, không đánh nhau và không giơ máy quay. Về mặt kỷ luật bề nổi, Minh hoàn toàn vô can.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-sky-600 text-sky-300 hover:text-white text-xs transition border border-slate-700" title="Nghe phân tích">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Minh không xúc phạm ai, không đánh nhau và không giơ máy quay. Về mặt kỷ luật bề nổi, Minh hoàn toàn "vô can".
+                  </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/40 space-y-2">
+                  <div class="flex items-center justify-between">
+                    <h4 class="font-bold text-sm text-amber-300">Nhưng Minh đã bỏ qua cơ hội vàng</h4>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Nhưng Minh đã bỏ qua cơ hội vàng. Khi người chứng kiến im lặng quay lưng, mâu thuẫn không tự tắt mà tiếp tục bùng phát dữ dội hơn, đẩy bạn bè vào nguy cơ tổn thương.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe phân tích">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Khi người chứng kiến im lặng quay lưng, mâu thuẫn không tự tắt mà tiếp tục bùng phát dữ dội hơn, đẩy bạn bè vào nguy cơ tổn thương.
+                  </p>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-gradient-to-r from-amber-950/40 via-slate-900 to-amber-950/40 border border-amber-400/40 text-center space-y-1.5 shadow-lg relative">
+                <div class="flex items-center justify-center gap-2">
+                  <h3 class="text-xs sm:text-sm font-extrabold text-amber-300 tracking-wider uppercase">
+                    KHÔNG LÀM ĐIỀU XẤU ĐÃ ĐỦ CHƯA?
+                  </h3>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Không làm điều xấu đã đủ chưa? Hay trong một ngôi trường an toàn, mỗi chúng ta còn cần có dũng khí và trách nhiệm bảo vệ điều đúng?', this)" class="audio-btn w-6 h-6 rounded-md bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 flex items-center justify-center text-xs transition" title="Nghe câu hỏi trăn trở">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-xs text-slate-200">
+                  Hay trong một ngôi trường an toàn, mỗi chúng ta còn cần có <strong>dũng khí và trách nhiệm bảo vệ điều đúng</strong>?
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+              <button onclick="goToScene('countdown')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Thử phương án khác
+              </button>
+              <button onclick="goToScene('gap_analysis')" class="btn-cinema px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md">
+                SUY NGHĨ TIẾP: PHÂN TÍCH THAM LUẬN <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 5. NHÁNH B – QUAY VIDEO
+      branchB: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-slate-950 via-rose-950/40 to-slate-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-rose-900/40 pb-3">
+              <span class="text-xs font-bold text-rose-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-video text-rose-500"></i> Nhánh diễn biến B: Quay Phim & Đăng Tải
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-rose-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-rose-300 hidden sm:inline">Rủi ro pháp lý & an ninh mạng</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <div class="bg-slate-950 rounded-2xl border-4 border-slate-700 p-3 shadow-2xl relative overflow-hidden max-w-xs mx-auto w-full">
+                <div class="flex items-center justify-between text-[11px] text-white px-2 py-1 bg-red-600/80 rounded-md mb-2">
+                  <span class="flex items-center gap-1 font-mono font-bold">
+                    <span class="w-2 h-2 rounded-full bg-white animate-ping"></span> REC 00:08
+                  </span>
+                  <span>Nhóm Lớp 8A</span>
+                </div>
+                <div class="space-y-2 py-2 text-xs">
+                  <div class="p-2 rounded bg-slate-900 border border-slate-800 text-slate-300 flex items-center justify-between">
+                    <div><span class="font-bold text-amber-400">Bạn học:</span> “Gửi clip lên nhóm đi nhanh!”</div>
+                    <button onclick="SpeechService.toggleSpeak('crowd', 'Gửi clip lên nhóm đi nhanh!', this)" class="audio-btn p-1 rounded bg-slate-800 text-amber-300 hover:text-white text-[10px]" title="Nghe"><i class="fa-solid fa-volume-high"></i></button>
+                  </div>
+                  <div class="p-2 rounded bg-slate-900 border border-slate-800 text-sky-300 flex items-center justify-between">
+                    <span>Đã tải video lên nhóm</span>
+                    <span class="font-mono text-emerald-400 font-bold">53 lượt xem</span>
+                  </div>
+                  <div class="p-2 rounded bg-rose-950/60 border border-rose-800/40 text-rose-200 text-[11px] flex items-center justify-between">
+                    <div><i class="fa-solid fa-triangle-exclamation mr-1"></i> “Cậu quay cái gì đấy?” – Hoàng phát hiện!</div>
+                    <button onclick="SpeechService.toggleSpeak('hoang', 'Cậu quay cái gì đấy? Ai cho cậu quay?', this)" class="audio-btn p-1 rounded bg-rose-900 text-rose-200 hover:text-white text-[10px]" title="Nghe Hoàng phản ứng"><i class="fa-solid fa-volume-high"></i></button>
+                  </div>
+                </div>
+                <div class="text-[10px] text-center text-slate-500 pt-1">Mô phỏng phát tán không kiểm soát</div>
+              </div>
+
+              <div class="space-y-4">
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-rose-500/40 space-y-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <h4 class="font-bold text-sm sm:text-base text-rose-400">
+                      Một người chứng kiến có thể trở thành một phần của vấn đề chỉ bằng một cú nhấn nút.
+                    </h4>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Một người chứng kiến có thể trở thành một phần của vấn đề chỉ bằng một cú nhấn nút. Sự xuất hiện của ống kính máy quay làm đối phương kích động hơn, sợ mất mặt, khiến xung đột bị đẩy lên cao trào.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-rose-300 hover:text-white text-xs transition shrink-0 border border-slate-700" title="Nghe phân tích tâm lý">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Sự xuất hiện của ống kính máy quay làm đối phương kích động hơn, sợ "mất mặt", khiến xung đột bị đẩy lên cao trào.
+                  </p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/40 space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <p class="text-xs sm:text-sm font-extrabold text-amber-300">QUAY LẠI – PHÁT TÁN – CỔ VŨ</p>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Quay lại, phát tán, cổ vũ, liệu có thực sự là vô can? Luật Trẻ em và Luật An ninh mạng nghiêm cấm việc đăng tải thông tin, hình ảnh đời tư xúc phạm danh dự, nhân phẩm học sinh.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe phân tích pháp lý">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-300">
+                    Liệu có thực sự là “vô can”? Luật Trẻ em và Luật An ninh mạng nghiêm cấm việc đăng tải thông tin, hình ảnh đời tư xúc phạm danh dự, nhân phẩm học sinh.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-rose-900/40">
+              <button onclick="goToScene('countdown')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Thử phương án khác
+              </button>
+              <button onclick="goToScene('gap_analysis')" class="btn-cinema px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm shadow-md">
+                PHÂN TÍCH LỰA CHỌN <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 6. NHÁNH C – TỰ CAN NGĂN
+      branchC: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-slate-950 via-amber-950/30 to-slate-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-amber-800/40 pb-3">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved"></i> Nhánh diễn biến C: Tự Mình Can Ngăn
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-amber-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-amber-300 hidden sm:inline">Ý định tốt nhưng rủi ro an toàn cá nhân</span>
+              </div>
+            </div>
+
+            <div class="max-w-3xl mx-auto w-full my-auto space-y-4">
+              <div class="p-4 rounded-xl glass-dark border border-amber-500/40 space-y-2">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs sm:text-sm text-slate-200 italic">
+                    Minh vội vàng chen vào giữa: <span class="text-amber-300 font-medium">“An, Hoàng, hai bạn dừng lại đã! Có chuyện gì thì bình tĩnh nói với nhau...”</span>
+                  </p>
+                  <button onclick="SpeechService.toggleSpeak('minh', 'An, Hoàng, hai bạn dừng lại đã! Có chuyện gì thì bình tĩnh nói với nhau...', this)" class="audio-btn p-1.5 rounded-lg bg-amber-600/30 hover:bg-amber-600 text-amber-200 text-xs flex items-center gap-1 shrink-0" title="Nghe giọng Minh can ngăn">
+                    <i class="fa-solid fa-volume-high"></i> Nghe Minh
+                  </button>
+                </div>
+                <div class="p-3 rounded-lg bg-rose-950/40 border border-rose-500/30 text-xs text-rose-200 flex items-center justify-between">
+                  <div>Hoàng gạt mạnh tay Minh: <strong>“Minh đừng có xen vào! Chuyện không phải của cậu!”</strong> – Không khí càng hỗn loạn hơn.</div>
+                  <button onclick="SpeechService.toggleSpeak('hoang', 'Minh đừng có xen vào! Chuyện không phải của cậu!', this)" class="audio-btn p-1.5 rounded-lg bg-rose-600/30 hover:bg-rose-600 text-rose-200 text-xs flex items-center gap-1 shrink-0" title="Nghe giọng Hoàng phản ứng">
+                    <i class="fa-solid fa-volume-high"></i> Nghe Hoàng
+                  </button>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-2 text-center relative">
+                <div class="flex items-center justify-center gap-2">
+                  <h3 class="text-sm sm:text-base font-bold text-white">Ý định của Minh rất tích cực và đáng ghi nhận.</h3>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Ý định của Minh rất tích cực và đáng ghi nhận. Nhưng khi học sinh chưa được trang bị kỹ năng hòa giải chuyên sâu, việc một mình can thiệp vào cuộc xô xát đang nóng có thể khiến chính các em bị tổn thương thân thể hoặc đẩy mâu thuẫn lên cao.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe phân tích">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl mx-auto">
+                  Nhưng khi học sinh chưa được trang bị kỹ năng hòa giải chuyên sâu, việc một mình can thiệp vào cuộc xô xát đang nóng có thể khiến chính các em bị tổn thương thân thể hoặc đẩy mâu thuẫn lên cao.
+                </p>
+              </div>
+
+              <div class="p-4 rounded-xl bg-sky-950/70 border border-sky-400/50 space-y-2.5">
+                <h4 class="text-xs sm:text-sm font-bold text-sky-200">LÚC NÀY, MINH NÊN LÀM GÌ TIẾP THEO?</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <button onclick="goToScene('branchD')" class="p-2.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 border border-emerald-400 text-left font-medium text-emerald-200 transition">
+                    ✓ Nhận ra giới hạn và lập tức chạy đi báo thầy cô
+                  </button>
+                  <button onclick="goToScene('branchB')" class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-left font-medium text-slate-300 transition">
+                    ✗ Bất lực, rút điện thoại ra quay lại làm chứng cứ
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-amber-800/40">
+              <button onclick="goToScene('countdown')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Thử phương án khác
+              </button>
+              <button onclick="goToScene('branchD')" class="btn-cinema px-5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md">
+                CHUYỂN SANG GIẢI PHÁP AN TOÀN <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 7. NHÁNH D – TÌM NGƯỜI HỖ TRỢ
+      branchD: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-sky-800/50 pb-3">
+              <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-circle-check text-emerald-400"></i> Nhánh diễn biến D: Tìm Kiếm Hỗ Trợ Kịp Thời
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-emerald-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-sky-300 hidden sm:inline">Giải pháp thượng tôn an toàn & quy chuẩn</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto space-y-4">
+              <div class="p-3.5 sm:p-4 rounded-xl glass-dark border border-sky-500/40 flex items-center justify-between gap-4">
+                <div class="flex items-center space-x-3.5">
+                  <div class="w-14 h-14 sm:w-16 sm:h-16 shrink-0">${CharacterSVGs.minh('determined')}</div>
+                  <div class="space-y-0.5">
+                    <span class="text-[11px] font-bold text-sky-400 uppercase">Hành động của Minh</span>
+                    <p class="text-xs sm:text-sm text-white font-medium italic">
+                      Minh dứt khoát hạ điện thoại xuống, quay sang bạn bên cạnh: <span class="text-amber-300 font-semibold">“Các bạn đừng quay nữa! Cậu ở đây nhé, mình chạy đi gọi cô ngay!”</span>
+                    </p>
+                  </div>
+                </div>
+                <button onclick="SpeechService.toggleSpeak('minh', 'Các bạn đừng quay nữa! Cậu ở đây nhé, mình chạy đi gọi cô ngay!', this)" class="audio-btn shrink-0 px-3 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-600 text-sky-200 text-xs flex items-center gap-1.5 border border-sky-400/50 shadow transition" title="Nghe lời dứt khoát của Minh">
+                  <i class="fa-solid fa-volume-high"></i> <span>Nghe Minh</span>
+                </button>
+              </div>
+
+              <!-- Cô giáo Nguyễn Thị Hiền xuất hiện -->
+              <div class="p-4 sm:p-5 rounded-2xl bg-slate-900/90 border-2 border-emerald-400/50 shadow-2xl space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3.5">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0">${CharacterSVGs.teacher()}</div>
+                    <div>
+                      <h4 class="font-bold text-sm sm:text-base text-emerald-200">Cô giáo chủ nhiệm Nguyễn Thị Hiền kịp thời có mặt</h4>
+                      <p class="text-xs text-slate-400">Giọng nói điềm tĩnh, ấm áp, định hướng tôn trọng nhân phẩm:</p>
+                    </div>
+                  </div>
+                  <button onclick="SpeechService.toggleSpeak('teacher', 'Các em dừng lại đã. Trước hết chúng ta cùng hít thở sâu và bình tĩnh. Cô muốn lắng nghe từng bạn giải thích xem chuyện gì đã xảy ra, nhưng trong phòng tư vấn tâm lý, không phải ở giữa hành lang này.', this)" class="btn-cinema audio-btn px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
+                    <i class="fa-solid fa-volume-high"></i> Nghe Cô giáo Hiền
+                  </button>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-emerald-950/40 border-l-4 border-emerald-400 text-xs sm:text-sm text-emerald-100 italic space-y-1">
+                  <p>“Các em dừng lại đã. Trước hết chúng ta cùng hít thở sâu và bình tĩnh.”</p>
+                  <p>“Cô muốn lắng nghe từng bạn giải thích xem chuyện gì đã xảy ra, nhưng trong phòng tư vấn tâm lý, không phải ở giữa hành lang này.”</p>
+                </div>
+              </div>
+
+              <div class="p-3 sm:p-4 rounded-xl bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 border border-sky-400/30 text-center space-y-1 relative">
+                <div class="flex items-center justify-center gap-2">
+                  <h3 class="text-xs sm:text-sm font-bold text-amber-300">AN TOÀN KHÔNG CHỈ LÀ NGĂN MỘT CUỘC XÔ XÁT.</h3>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'An toàn không chỉ là ngăn một cuộc xô xát. An toàn còn là biết tìm đúng người và đúng nơi để tìm kiếm sự hỗ trợ.', this)" class="audio-btn w-6 h-6 rounded-md bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 flex items-center justify-center text-xs transition" title="Nghe thông điệp">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-[11px] sm:text-xs text-slate-200">AN TOÀN CÒN LÀ BIẾT TÌM ĐÚNG NGƯỜI VÀ ĐÚNG NƠI ĐỂ TÌM KIẾM SỰ HỖ TRỢ.</p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-sky-800/40">
+              <button onclick="goToScene('countdown')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Xem các phương án khác
+              </button>
+              <button onclick="goToScene('gap_analysis')" class="btn-cinema px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg flex items-center gap-2">
+                <span>BƯỚC VÀO PHẦN THAM LUẬN</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 8. BIẾT ĐÚNG ≠ LÀM ĐÚNG
+      gap_analysis: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-slate-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-scale-balanced"></i> Trọng Tâm Tham Luận Sư Phạm
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-slate-400 hidden sm:inline">Giáo viên: Nguyễn Thị Hiền</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto space-y-6">
+              <div class="text-center space-y-2">
+                <div class="flex items-center justify-center gap-2">
+                  <h2 class="text-2xl sm:text-4xl font-extrabold font-display text-white tracking-tight">
+                    BIẾT ĐÚNG <span class="text-rose-500">≠</span> LÀM ĐÚNG
+                  </h2>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Biết đúng khác với làm đúng. Hầu hết học sinh đều biết không nên xúc phạm bạn, không nên quay clip phát tán. Nhưng khi tình huống thực sự xảy ra, vì sao nhiều em vẫn chưa lựa chọn đúng?', this)" class="audio-btn w-7 h-7 rounded-lg bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 flex items-center justify-center text-xs transition border border-sky-500/30" title="Nghe câu hỏi trọng tâm">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300 max-w-2xl mx-auto leading-relaxed">
+                  “Hầu hết học sinh đều biết không nên xúc phạm bạn, không nên quay clip phát tán. Nhưng khi tình huống thực sự xảy ra, vì sao nhiều em vẫn chưa lựa chọn đúng?”
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-center py-2">
+                <div class="p-4 rounded-2xl bg-sky-950/80 border-2 border-sky-400 text-center space-y-2 shadow-lg relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-full bg-sky-500/20 text-sky-300 flex items-center justify-center font-bold text-sm">
+                      <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Bờ trái: Biết đúng. Học thuộc điều luật và nội quy, biết quay clip bạn bè là sai, trả lời trắc nghiệm đạt điểm cao.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-sky-600 text-sky-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bờ trái">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-extrabold text-sm sm:text-base text-sky-200">BỜ TRÁI: BIẾT ĐÚNG</h4>
+                  <ul class="text-[11px] text-slate-300 text-left space-y-1 list-disc pl-4">
+                    <li>Học thuộc điều luật & nội quy</li>
+                    <li>Biết quay clip bạn bè là sai</li>
+                    <li>Trả lời trắc nghiệm đạt điểm cao</li>
+                  </ul>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900 border border-dashed border-amber-500/60 text-center space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold uppercase">Khoảng trống sư phạm</span>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Khoảng trống sư phạm: Khoảng cách giữa hiểu lý thuyết và hành động thực tế khi bị bạn bè kích động.', this)" class="audio-btn p-1 rounded-md bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe giải thích">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <div class="flex items-center justify-center space-x-2 text-amber-400 text-lg">
+                    <i class="fa-solid fa-person-falling-burst"></i>
+                  </div>
+                  <p class="text-xs text-amber-200 font-semibold leading-relaxed">
+                    Khoảng cách giữa "Hiểu lý thuyết" và "Hành động thực tế khi bị bạn bè kích động"
+                  </p>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-emerald-950/80 border-2 border-emerald-400 text-center space-y-2 shadow-lg relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-sm">
+                      <i class="fa-solid fa-hands-holding-child"></i>
+                    </div>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Bờ phải: Làm đúng. Dừng lại trước áp lực đám đông, hạ máy điện thoại xuống, bản lĩnh tìm kiếm người hỗ trợ.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bờ phải">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-extrabold text-sm sm:text-base text-emerald-200">BỜ PHẢI: LÀM ĐÚNG</h4>
+                  <ul class="text-[11px] text-slate-300 text-left space-y-1 list-disc pl-4">
+                    <li>Dừng lại trước áp lực đám đông</li>
+                    <li>Hạ máy điện thoại xuống</li>
+                    <li>Bản lĩnh tìm kiếm người hỗ trợ</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 border border-slate-700 flex items-center justify-between gap-3 text-left">
+                <p class="text-xs sm:text-sm text-sky-200 font-medium">
+                  <i class="fa-solid fa-lightbulb text-amber-400 mr-1.5"></i>
+                  Giáo dục pháp luật không thể chỉ dừng lại ở <strong>truyền thụ kiến thức</strong>, mà phải kiến tạo năng lực <strong>ra quyết định và hành động đạo đức</strong>.
+                </p>
+                <button onclick="SpeechService.toggleSpeak('narrator', 'Giáo dục pháp luật không thể chỉ dừng lại ở truyền thụ kiến thức, mà phải kiến tạo năng lực ra quyết định và hành động đạo đức.', this)" class="audio-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-sky-600/30 hover:bg-sky-600 text-sky-200 text-xs flex items-center gap-1 border border-sky-500/30 transition" title="Nghe kết luận này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i> Nghe
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+              <button onclick="goToScene('branchD')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Xem lại tình huống
+              </button>
+              <button onclick="goToScene('habit_ladder')" class="btn-cinema px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs sm:text-sm shadow-md">
+                XEM MÔ HÌNH NÂNG BẬC <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 9. MÔ HÌNH 4 NẤC THANG
+      habit_ladder: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-stairs"></i> Mô Hình 4 Nấc Thang Chuyển Hóa Hành Vi
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-slate-400 hidden sm:inline">Từ nhận thức đến thói quen phản xạ tự nhiên</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto space-y-5">
+              <div class="text-center space-y-1">
+                <div class="flex items-center justify-center gap-2">
+                  <h3 class="text-xl sm:text-3xl font-extrabold font-display text-white">
+                    LÀM THẾ NÀO ĐỂ LẤP ĐẦY KHOẢNG TRỐNG?
+                  </h3>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Bốn bước chuyển hóa: Biết đúng, muốn làm đúng, biết cách làm đúng và hình thành thói quen đúng.', this)" class="audio-btn w-7 h-7 rounded-lg bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 flex items-center justify-center text-xs transition border border-sky-500/30" title="Nghe giới thiệu mô hình">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-300">Bấm nút "Tiếp tục bậc kế tiếp" hoặc nhấp vào từng bậc thang</p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
+                <div onclick="highlightLadderStep(1)" id="ladder-step-1" class="cursor-pointer p-4 rounded-xl bg-slate-900 border-2 border-sky-400 transition hover:scale-105 space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 text-white font-bold text-sm flex items-center justify-center">1</div>
+                    <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Bậc 1: Biết đúng. Hiểu rõ các giới hạn pháp luật, quyền riêng tư và quy tắc văn hóa ứng xử.', this)" class="audio-btn p-1 rounded bg-slate-800 hover:bg-sky-600 text-sky-300 hover:text-white text-xs transition border border-slate-700" title="Nghe bậc 1">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-bold text-xs sm:text-sm text-sky-200">BIẾT ĐÚNG</h4>
+                  <p class="text-[11px] text-slate-300">Hiểu rõ các giới hạn pháp luật, quyền riêng tư và quy tắc văn hóa ứng xử.</p>
+                </div>
+
+                <div onclick="highlightLadderStep(2)" id="ladder-step-2" class="cursor-pointer p-4 rounded-xl bg-slate-900 border-2 border-slate-700 transition hover:scale-105 space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm flex items-center justify-center">2</div>
+                    <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Bậc 2: Muốn làm đúng. Khơi dậy sự đồng cảm, tinh thần trách nhiệm và lòng trắc ẩn với bạn bè.', this)" class="audio-btn p-1 rounded bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe bậc 2">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-bold text-xs sm:text-sm text-white">MUỐN LÀM ĐÚNG</h4>
+                  <p class="text-[11px] text-slate-300">Khơi dậy sự đồng cảm, tinh thần trách nhiệm và lòng trắc ẩn với bạn bè.</p>
+                </div>
+
+                <div onclick="highlightLadderStep(3)" id="ladder-step-3" class="cursor-pointer p-4 rounded-xl bg-slate-900 border-2 border-slate-700 transition hover:scale-105 space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm flex items-center justify-center">3</div>
+                    <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Bậc 3: Biết cách làm. Được trang bị kịch bản thực tế: biết tìm ai, nói câu gì, liên hệ ở đâu.', this)" class="audio-btn p-1 rounded bg-slate-800 hover:bg-sky-600 text-sky-300 hover:text-white text-xs transition border border-slate-700" title="Nghe bậc 3">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-bold text-xs sm:text-sm text-white">BIẾT CÁCH LÀM</h4>
+                  <p class="text-[11px] text-slate-300">Được trang bị kịch bản thực tế: biết tìm ai, nói câu gì, liên hệ ở đâu.</p>
+                </div>
+
+                <div onclick="highlightLadderStep(4)" id="ladder-step-4" class="cursor-pointer p-4 rounded-xl bg-slate-900 border-2 border-slate-700 transition hover:scale-105 space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm flex items-center justify-center">4</div>
+                    <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'Bậc 4: Thói quen đúng. Phản xạ tự nhiên: Dừng lại, Suy nghĩ, Lựa chọn mà không cần người lớn nhắc nhở.', this)" class="audio-btn p-1 rounded bg-slate-800 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs transition border border-slate-700" title="Nghe bậc 4">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-bold text-xs sm:text-sm text-white">THÓI QUEN ĐÚNG</h4>
+                  <p class="text-[11px] text-slate-300">Phản xạ tự nhiên: Dừng lại - Nghĩ - Chọn mà không cần người lớn nhắc nhở.</p>
+                </div>
+              </div>
+
+              <div id="ladder-detail-box" class="p-3.5 rounded-xl bg-slate-900/90 border border-sky-500/50 text-xs sm:text-sm text-sky-100 flex items-center justify-between gap-3">
+                <div class="flex items-center space-x-3">
+                  <i class="fa-solid fa-circle-check text-sky-400 text-base shrink-0"></i>
+                  <span id="ladder-detail-text">
+                    Bậc 1 là nền tảng: Nhận diện rõ hành vi quay clip và phát tán xúc phạm người khác là hành vi bị pháp luật ngăn cấm.
+                  </span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button onclick="SpeechService.toggleSpeak('narrator', document.getElementById('ladder-detail-text').innerText, this)" class="audio-btn px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 text-xs flex items-center gap-1" title="Nghe nội dung bậc này">
+                    <i class="fa-solid fa-volume-high"></i> <span>Nghe</span>
+                  </button>
+                  <button onclick="advanceLadderStep()" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition flex items-center gap-1.5">
+                    <span>Tiếp tục bậc <span id="ladder-step-num">2</span></span>
+                    <i class="fa-solid fa-forward-step"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+              <button onclick="goToScene('gap_analysis')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
+              </button>
+              <button onclick="goToScene('model_3L')" class="btn-cinema px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs sm:text-sm shadow-md">
+                TIẾP TỤC: MÔ HÌNH 3L <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 10. MÔ HÌNH 3L
+      model_3L: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-slate-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-cubes-stacked"></i> Khung Lý Thuyết 3L Trong Quản Trị Học Đường
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-slate-400 hidden sm:inline">Luật pháp – Lựa chọn – Lan tỏa</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto space-y-4">
+              <div class="text-center space-y-1">
+                <div class="flex items-center justify-center gap-2">
+                  <h3 class="text-xl sm:text-3xl font-extrabold font-display text-white">MÔ HÌNH TAM GIÁC ĐỒNG TÂM 3L</h3>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Mô hình 3L: Luật pháp xác lập giới hạn, Lựa chọn tạo ra an toàn và Lan tỏa kiến tạo văn hóa học đường.', this)" class="audio-btn w-7 h-7 rounded-lg bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 flex items-center justify-center text-xs transition border border-sky-500/30 shadow-sm" title="Nghe tóm lược mô hình 3L">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-xs text-slate-300">Nhấp vào từng vòng tròn để đối chiếu với chính hành vi của Minh ở hành lang</p>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                <div onclick="select3LTab('L1')" id="tab-3L-L1" class="cursor-pointer p-4 rounded-2xl bg-sky-950/70 border-2 border-sky-400 space-y-2 hover:scale-[1.02] transition shadow-lg relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-full bg-sky-500 text-slate-950 font-black text-xs">L1</span>
+                    <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'L1 – Luật pháp: Hiểu chuẩn mực và giới hạn của hành vi. Ranh giới pháp lý rõ ràng giúp học sinh hiểu hành vi vi phạm gắn liền với trách nhiệm pháp lý.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-sky-600 text-sky-300 hover:text-white text-xs transition border border-slate-700" title="Nghe L1">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-bold text-sm sm:text-base text-sky-200">LUẬT PHÁP</h4>
+                  <p class="text-xs text-slate-300 font-medium">“Hiểu chuẩn mực và giới hạn của hành vi”</p>
+                </div>
+
+                <div onclick="select3LTab('L2')" id="tab-3L-L2" class="cursor-pointer p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 space-y-2 hover:scale-[1.02] transition shadow-lg relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black text-xs">L2</span>
+                    <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'L2 – Lựa chọn: Biết xử lý đúng trong tình huống thực. Năng lực đưa ra quyết định có trách nhiệm, không chọn theo số đông kích động.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe L2">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-bold text-sm sm:text-base text-white">LỰA CHỌN</h4>
+                  <p class="text-xs text-slate-300 font-medium">“Biết xử lý đúng trong tình huống thực”</p>
+                </div>
+
+                <div onclick="select3LTab('L3')" id="tab-3L-L3" class="cursor-pointer p-4 rounded-2xl bg-slate-900 border-2 border-slate-700 space-y-2 hover:scale-[1.02] transition shadow-lg relative">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-500 text-slate-950 font-black text-xs">L3</span>
+                    <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('narrator', 'L3 – Lan tỏa: Biến hành vi đúng thành văn hóa chung. Một người lựa chọn đúng sẽ truyền cảm hứng cho tập thể hạ máy xuống, tạo chuẩn mực văn hóa bền vững.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs transition border border-slate-700" title="Nghe L3">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-bold text-sm sm:text-base text-white">LAN TỎA</h4>
+                  <p class="text-xs text-slate-300 font-medium">“Biến hành vi đúng thành văn hóa chung”</p>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-200 flex items-center justify-between gap-3 text-left">
+                <div id="content-3L-box">
+                  <strong class="text-sky-300">Ý nghĩa sư phạm:</strong> Luật pháp không thể chỉ là những dòng điều lệ khô cứng trong sách giáo khoa. Luật phải chuyển hóa thành năng lực <strong>Lựa chọn</strong> của từng cá nhân và nhân rộng thành sự <strong>Lan tỏa</strong> của cả tập thể.
+                </div>
+                <button onclick="SpeechService.toggleSpeak('narrator', document.getElementById('content-3L-box').innerText, this)" class="audio-btn shrink-0 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 border border-slate-700 text-xs flex items-center gap-1" title="Nghe ý nghĩa sư phạm">
+                  <i class="fa-solid fa-volume-high"></i> <span>Nghe</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+              <button onclick="goToScene('habit_ladder')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
+              </button>
+              <button onclick="goToScene('decision_matrix')" class="btn-cinema px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md">
+                QUY TRÌNH RA QUYẾT ĐỊNH <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 11. QUY TRÌNH 4 BƯỚC
+      decision_matrix: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-compass"></i> Kỹ Năng Sống Cốt Lõi Cho Học Sinh
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-slate-400 hidden sm:inline">Quy trình xử lý phản xạ 4 bước</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto space-y-4">
+              <div class="text-center space-y-1">
+                <div class="flex items-center justify-center gap-2">
+                  <h3 class="text-xl sm:text-3xl font-extrabold font-display text-white">CÔNG THỨC 4 BƯỚC TRONG 30 GIÂY</h3>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Bốn bước phản xạ: Dừng lại, Suy nghĩ, Lựa chọn giải pháp an toàn và Chịu trách nhiệm.', this)" class="audio-btn w-7 h-7 rounded-lg bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 flex items-center justify-center text-xs transition border border-sky-500/30 shadow-sm" title="Nghe công thức 4 bước">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+                <p class="text-xs text-slate-300">Bộ công cụ tâm lý giúp học sinh tự chủ bản thân trước cám dỗ đám đông</p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="p-4 rounded-xl bg-slate-900 border border-rose-500/50 hover:border-rose-400 space-y-2 transition shadow-md relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-rose-600 text-white font-black text-xs flex items-center justify-center">01</div>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Bước 1: Dừng. Không phản ứng ngay theo cảm xúc bốc đồng hoặc lời xúi giục của bạn bè xung quanh.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-rose-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bước 1">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-extrabold text-sm text-rose-300">DỪNG</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed">Không phản ứng ngay theo cảm xúc bốc đồng hoặc lời xúi giục của bạn bè xung quanh.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/50 hover:border-amber-400 space-y-2 transition shadow-md relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-amber-600 text-slate-950 font-black text-xs flex items-center justify-center">02</div>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Bước 2: Nghĩ. Tự hỏi: Nếu mình quay clip này, ai sẽ bị tổn thương? Hậu quả pháp lý là gì?', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bước 2">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-extrabold text-sm text-amber-300">NGHĨ</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed">Tự hỏi: <em>“Nếu mình quay clip này, ai sẽ bị tổn thương? Hậu quả pháp lý là gì?”</em></p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/50 hover:border-emerald-400 space-y-2 transition shadow-md relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-black text-xs flex items-center justify-center">03</div>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Bước 3: Chọn. Lựa chọn phương án an toàn nhất: Hạ máy xuống và nhanh chóng tìm thầy cô hỗ trợ.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bước 3">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-extrabold text-sm text-emerald-300">CHỌN</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed">Lựa chọn phương án an toàn nhất: Hạ máy xuống và nhanh chóng tìm thầy cô hỗ trợ.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900 border border-sky-500/50 hover:border-sky-400 space-y-2 transition shadow-md relative">
+                  <div class="flex items-center justify-between">
+                    <div class="w-8 h-8 rounded-lg bg-sky-600 text-white font-black text-xs flex items-center justify-center">04</div>
+                    <button onclick="SpeechService.toggleSpeak('narrator', 'Bước 4: Chịu trách nhiệm. Sẵn sàng đứng về phía điều đúng, bảo vệ không gian trường học an toàn và lành mạnh.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-sky-600 text-sky-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bước 4">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <h4 class="font-extrabold text-sm text-sky-300">CHỊU TRÁCH NHIỆM</h4>
+                  <p class="text-xs text-slate-300 leading-relaxed">Sẵn sàng đứng về phía điều đúng, bảo vệ không gian trường học an toàn và lành mạnh.</p>
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 flex items-center justify-between gap-3 text-xs text-slate-400 text-left">
+                <div class="flex items-center space-x-2">
+                  <i class="fa-solid fa-shield text-sky-400 mr-1.5 text-base shrink-0"></i>
+                  <span>Khi học sinh làm chủ được quy trình này, các em không còn là những người quan sát vô cảm hay kẻ tiếp tay.</span>
+                </div>
+                <button onclick="SpeechService.toggleSpeak('narrator', 'Khi học sinh làm chủ được quy trình này, các em không còn là những người quan sát vô cảm hay kẻ tiếp tay.', this)" class="audio-btn shrink-0 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs border border-slate-700" title="Nghe kết luận">
+                  <i class="fa-solid fa-volume-high"></i> Nghe
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+              <button onclick="goToScene('model_3L')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
+              </button>
+              <button onclick="goToScene('ai_socratic')" class="btn-cinema px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs sm:text-sm shadow-md">
+                TRẢI NGHIỆM AI GỢI MỞ <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 12. MÔ PHỎNG AI GỢI MỞ
+      ai_socratic: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-slate-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-robot text-sky-400"></i> Mô Phỏng Trợ Lý AI Gợi Mở Tình Huống
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-amber-300 hidden sm:inline">Phương pháp Socrates – Gợi mở tư duy phản tư</span>
+              </div>
+            </div>
+
+            <div class="max-w-3xl mx-auto w-full my-auto space-y-3">
+              <div id="socratic-chat-history" class="glass-dark rounded-2xl p-4 border border-slate-700 h-64 overflow-y-auto space-y-3 text-xs sm:text-sm">
+                <div class="flex items-start space-x-2.5">
+                  <div class="w-7 h-7 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 border border-sky-400/40">
+                    <i class="fa-solid fa-brain"></i>
+                  </div>
+                  <div class="p-3 rounded-2xl rounded-tl-none bg-slate-800/90 text-slate-200 border border-slate-700 max-w-lg leading-relaxed flex items-start justify-between gap-2">
+                    <span>Chào em. Khi nhìn thấy hai bạn An và Hoàng đang mâu thuẫn ở hành lang và có bạn giục em quay clip, suy nghĩ đầu tiên xuất hiện trong đầu em là gì?</span>
+                    <button onclick="SpeechService.toggleSpeak('teacher', 'Chào em. Khi nhìn thấy hai bạn An và Hoàng đang mâu thuẫn ở hành lang và có bạn giục em quay clip, suy nghĩ đầu tiên xuất hiện trong đầu em là gì?', this)" class="audio-btn shrink-0 p-1 rounded bg-slate-700 hover:bg-sky-600 text-sky-300 hover:text-white text-[11px]" title="Nghe câu hỏi AI"><i class="fa-solid fa-volume-high"></i></button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="socratic-options" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 hover:bg-sky-900/60 border border-slate-700 hover:border-sky-400 transition gap-2">
+                  <button onclick="handleSocraticResponse(1)" class="text-left text-slate-200 flex-1">
+                    💬 “Em nghĩ mình chỉ quay lại làm kỷ niệm hoặc chia sẻ cho bạn khác xem thôi.”
+                  </button>
+                  <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('minh', 'Em nghĩ mình chỉ quay lại làm kỷ niệm hoặc chia sẻ cho bạn khác xem thôi.', this)" class="audio-btn p-1 rounded bg-slate-800 hover:bg-sky-600 text-sky-300 text-xs shrink-0" title="Nghe câu trả lời 1"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 hover:bg-emerald-900/60 border border-slate-700 hover:border-emerald-400 transition gap-2">
+                  <button onclick="handleSocraticResponse(2)" class="text-left text-slate-200 flex-1">
+                    💬 “Em cảm thấy nguy hiểm và muốn can ngăn nhưng không biết bắt đầu từ đâu.”
+                  </button>
+                  <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('minh', 'Em cảm thấy nguy hiểm và muốn can ngăn nhưng không biết bắt đầu từ đâu.', this)" class="audio-btn p-1 rounded bg-slate-800 hover:bg-emerald-600 text-emerald-300 text-xs shrink-0" title="Nghe câu trả lời 2"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-center text-[11px] text-slate-400">
+                <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i>
+                <strong>AI không thay thế người thầy:</strong> AI đóng vai trò như chiếc gương phản chiếu để người học tự nhận diện động cơ và hậu quả hành vi.
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800">
+              <button onclick="goToScene('decision_matrix')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
+              </button>
+              <button onclick="goToScene('minh_reprise')" class="btn-cinema px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-sky-500 text-slate-950 font-bold text-xs sm:text-sm shadow-md">
+                TÁI HIỆN CAO TRÀO <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 13. CAO TRÀO: TÁI HIỆN CÂU CHUYỆN VỚI LỰA CHỌN MỚI
+      minh_reprise: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 text-white scene-fade-in">
+            <div class="flex items-center justify-between border-b border-sky-800/60 pb-3">
+              <span class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-film"></i> Tái hiện cao trào – 30 giây ở hành lang
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-emerald-400 font-semibold hidden sm:inline">Khi Minh đã làm chủ quy trình</span>
+              </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto w-full my-auto space-y-4">
+              <div class="text-center space-y-1">
+                <span class="text-xs font-bold text-sky-400 tracking-widest uppercase">KỊCH BẢN ĐÃ THAY ĐỔI</span>
+                <h3 class="text-xl sm:text-3xl font-black font-display text-white">BÂY GIỜ, HÃY QUAY LẠI 30 GIÂY Ở HÀNH LANG</h3>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="p-4 rounded-xl bg-slate-900 border border-rose-500/50 shadow-lg space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">1. DỪNG</span>
+                    <button onclick="SpeechService.toggleSpeak('minh', 'Bạn giục: Minh! Quay đi! Nhanh! Nhưng lần này Minh dừng lại.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-rose-600 text-rose-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bước 1">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-300">Bạn giục: <em>“Minh! Quay đi! Nhanh!”</em>. Minh rút điện thoại ra, nhưng lần này Minh <strong>DỪNG LẠI</strong>.</p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900 border border-amber-500/50 shadow-lg space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">2. NGHĨ</span>
+                    <button onclick="SpeechService.toggleSpeak('minh', 'Nếu mình cũng quay, danh dự bạn bè sẽ bị tổn hại và chuyện sẽ tồi tệ hơn.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-amber-600 text-amber-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bước 2">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-300">Minh tự nhủ: <em>“Nếu mình cũng quay, danh dự bạn bè sẽ bị tổn hại và chuyện sẽ tồi tệ hơn.”</em></p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-900 border border-emerald-500/50 shadow-lg space-y-2 relative">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">3. CHỌN</span>
+                    <button onclick="SpeechService.toggleSpeak('minh', 'Các bạn đừng quay nữa! Mình đi gọi cô ngay.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-emerald-600 text-emerald-300 hover:text-white text-xs transition border border-slate-700" title="Nghe Bước 3">
+                      <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                  </div>
+                  <p class="text-xs text-slate-300">Minh hạ máy: <em>“Đừng quay nữa! Mình đi gọi cô.”</em> Minh lập tức tìm sự trợ giúp của giáo viên.</p>
+                </div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-sky-950/60 border border-emerald-400/40 flex items-center justify-between space-x-4">
+                <div class="flex items-center space-x-4">
+                  <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0">${CharacterSVGs.teacher()}</div>
+                  <div>
+                    <h4 class="font-bold text-emerald-200 text-sm sm:text-base">Cô giáo Nguyễn Thị Hiền có mặt kịp thời</h4>
+                    <p class="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                      Mâu thuẫn được tháo gỡ trong sự tôn trọng. Hành lang trở lại bình yên, không có video nào bị phát tán, không ai bị tổn thương.
+                    </p>
+                  </div>
+                </div>
+                <button onclick="SpeechService.toggleSpeak('teacher', 'Cô giáo Nguyễn Thị Hiền có mặt, mâu thuẫn được tháo gỡ trong sự tôn trọng. Hành lang trở lại bình yên, không có video nào bị phát tán, không ai bị tổn thương.', this)" class="audio-btn shrink-0 px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600 text-emerald-200 text-xs flex items-center gap-1.5 border border-emerald-400/40 transition" title="Nghe kết quả">
+                  <i class="fa-solid fa-volume-high"></i> <span>Nghe</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-sky-800/40">
+              <button onclick="goToScene('ai_socratic')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
+              </button>
+              <button onclick="goToScene('final_climax')" class="btn-cinema px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs sm:text-sm shadow-lg flex items-center gap-2">
+                <span>THÔNG ĐIỆP CAO TRÀO</span>
+                <i class="fa-solid fa-award"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 14. THÔNG ĐIỆP CAO TRÀO
+      final_climax: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-4 sm:p-8 bg-slate-950 text-white scene-fade-in text-center">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-sky-900/25 via-transparent to-transparent pointer-events-none"></div>
+
+            <div class="relative z-10 flex items-center justify-between border-b border-slate-800 pb-3">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Đỉnh Cao Thông Điệp Tham Luận</span>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                  <i class="fa-solid fa-volume-high text-sky-400"></i>
+                  <span>Đọc toàn slide</span>
+                </button>
+                <span class="text-xs text-slate-400 hidden sm:inline">Trường học an toàn & hạnh phúc</span>
+              </div>
+            </div>
+
+            <div class="relative z-10 max-w-3xl mx-auto w-full my-auto space-y-6">
+              <div class="space-y-2">
+                <p class="text-xs sm:text-sm font-semibold uppercase tracking-widest text-sky-400">KẾT LUẬN CỦA BÁO CÁO VIÊN: GIÁO VIÊN NGUYỄN THỊ HIỀN</p>
+                <div class="flex items-center justify-center gap-2">
+                  <h3 class="text-2xl sm:text-4xl font-black font-display text-white">
+                    “Tình huống không hề thay đổi. Điều thay đổi chính là năng lực lựa chọn của Minh.”
+                  </h3>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Tình huống không hề thay đổi. Điều thay đổi chính là năng lực lựa chọn của Minh.', this)" class="audio-btn w-8 h-8 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 flex items-center justify-center text-sm transition shrink-0 border border-amber-500/30 shadow-sm" title="Nghe câu kết luận đắt giá">
+                    <i class="fa-solid fa-volume-high"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-2xl mx-auto pt-2">
+                <div class="p-3 rounded-xl bg-slate-900 border border-sky-500/40 text-sky-300 font-bold text-xs sm:text-sm flex items-center justify-between">
+                  <span>HIỂU ĐIỀU ĐÚNG</span>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Hiểu điều đúng.', this)" class="audio-btn p-1 text-sky-400 text-xs" title="Nghe"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 font-bold text-xs sm:text-sm flex items-center justify-between">
+                  <span>CHỌN ĐIỀU ĐÚNG</span>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Chọn điều đúng.', this)" class="audio-btn p-1 text-amber-400 text-xs" title="Nghe"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900 border border-emerald-500/40 text-emerald-300 font-bold text-xs sm:text-sm flex items-center justify-between">
+                  <span>LÀM ĐIỀU ĐÚNG</span>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Làm điều đúng.', this)" class="audio-btn p-1 text-emerald-400 text-xs" title="Nghe"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-900 border border-rose-500/40 text-rose-300 font-bold text-xs sm:text-sm flex items-center justify-between">
+                  <span>LAN TỎA ĐIỀU ĐÚNG</span>
+                  <button onclick="SpeechService.toggleSpeak('narrator', 'Lan tỏa điều đúng.', this)" class="audio-btn p-1 text-rose-400 text-xs" title="Nghe"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-center gap-2 max-w-xl mx-auto">
+                <p class="text-xs sm:text-sm text-slate-300 italic">
+                  Từ mỗi lựa chọn đúng của từng cá nhân học sinh – chúng ta cùng chung tay xây dựng một ngôi trường an toàn, kỷ cương và đong đầy hạnh phúc.
+                </p>
+                <button onclick="SpeechService.toggleSpeak('narrator', 'Từ mỗi lựa chọn đúng của từng cá nhân học sinh – chúng ta cùng chung tay xây dựng một ngôi trường an toàn, kỷ cương và đong đầy hạnh phúc.', this)" class="audio-btn p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs shrink-0 border border-slate-700" title="Nghe đoạn này"><i class="fa-solid fa-volume-high"></i></button>
+              </div>
+            </div>
+
+            <div class="relative z-10 flex items-center justify-between pt-3 border-t border-slate-800">
+              <button onclick="goToScene('minh_reprise')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
+              </button>
+              <button onclick="goToScene('epilogue')" class="btn-cinema px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md">
+                LỜI KẾT THAM LUẬN <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      },
+
+      // 15. LỜI KẾT THAM LUẬN
+      epilogue: function() {
+        return `
+          <div class="relative w-full h-full flex flex-col justify-between p-6 sm:p-10 bg-slate-950 text-white scene-fade-in text-center">
+            <!-- Top Right Slide Audio Button -->
+            <div class="absolute top-4 right-4 z-20">
+              <button onclick="toggleCurrentSlideVoice()" class="btn-slide-audio px-3 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/40 text-xs font-semibold flex items-center gap-1.5 shadow transition" title="Bấm phát/dừng toàn bộ nội dung slide này">
+                <i class="fa-solid fa-volume-high text-sky-400"></i>
+                <span>Đọc lời kết</span>
+              </button>
+            </div>
+
+            <div class="max-w-3xl mx-auto my-auto space-y-6">
+              <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-sky-500 to-amber-400 text-slate-950 flex items-center justify-center text-2xl shadow-xl">
+                <i class="fa-solid fa-quote-left"></i>
+              </div>
+
+              <blockquote class="text-lg sm:text-2xl lg:text-3xl font-bold font-display text-slate-100 leading-snug">
+                “Một trường học an toàn không phải là nơi không bao giờ xảy ra vấn đề;<br>
+                mà là nơi khi vấn đề xảy ra,<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-amber-300">mỗi học sinh đều biết mình cần lựa chọn điều gì.”</span>
+              </blockquote>
+
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="SpeechService.toggleSpeak('teacher', 'Một trường học an toàn không phải là nơi không bao giờ xảy ra vấn đề; mà là nơi khi vấn đề xảy ra, mỗi học sinh đều biết mình cần lựa chọn điều gì.', this)" class="audio-btn px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500/20 to-amber-500/20 hover:from-sky-500/30 hover:to-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-2 shadow transition" title="Nghe lời kết từ Cô giáo Nguyễn Thị Hiền">
+                  <i class="fa-solid fa-volume-high"></i>
+                  <span>Nghe Lời Kết Của Cô Giáo Nguyễn Thị Hiền</span>
+                </button>
+              </div>
+
+              <div class="pt-4 flex flex-wrap items-center justify-center gap-3">
+                <button onclick="goToScene('scene1')" class="btn-cinema px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 font-bold text-xs sm:text-sm border border-slate-700 shadow-md">
+                  <i class="fa-solid fa-film mr-1.5"></i> XEM LẠI TÌNH HUỐNG
+                </button>
+                <button onclick="goToScene('countdown')" class="btn-cinema px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm shadow-md">
+                  <i class="fa-solid fa-rotate mr-1.5"></i> TRẢI NGHIỆM LỰA CHỌN KHÁC
+                </button>
+                <button onclick="goToScene('opening')" class="btn-cinema px-5 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs sm:text-sm shadow-md">
+                  <i class="fa-solid fa-house mr-1.5"></i> VỀ TRANG ĐẦU
+                </button>
+              </div>
+            </div>
+
+            <div class="text-xs text-slate-500 pt-4 border-t border-slate-900 flex items-center justify-between">
+              <span>Trường THCS THSP Lý Tự Trọng • Tổ Lịch sử-Địa lí-GDCD • Báo cáo viên: Giáo viên Nguyễn Thị Hiền</span>
+              <span>Ý thức thượng tôn pháp luật & Văn hóa học đường</span>
+            </div>
+          </div>
+        `;
+      }
+    };
+
+    /* ==========================================================================
+       SCENE ROUTER & PROGRESS ORCHESTRATION
+       ========================================================================== */
+    const SceneOrder = [
+      { id: 'opening', name: 'Màn hình mở đầu' },
+      { id: 'scene1', name: 'Cảnh 1: Mâu thuẫn ở hành lang' },
+      { id: 'countdown', name: '30 giây quyết định' },
+      { id: 'branchA', name: 'Nhánh A: Bỏ đi' },
+      { id: 'branchB', name: 'Nhánh B: Quay video' },
+      { id: 'branchC', name: 'Nhánh C: Tự can ngăn' },
+      { id: 'branchD', name: 'Nhánh D: Tìm hỗ trợ' },
+      { id: 'gap_analysis', name: 'Tham luận: Biết đúng ≠ Làm đúng' },
+      { id: 'habit_ladder', name: 'Mô hình 4 nấc thang thói quen' },
+      { id: 'model_3L', name: 'Mô hình 3L (Luật - Chọn - Lan tỏa)' },
+      { id: 'decision_matrix', name: 'Quy trình 4 bước ra quyết định' },
+      { id: 'ai_socratic', name: 'Mô phỏng AI gợi mở' },
+      { id: 'minh_reprise', name: 'Tái hiện cao trào' },
+      { id: 'final_climax', name: 'Thông điệp cao trào' },
+      { id: 'epilogue', name: 'Lời kết tham luận' }
+    ];
+
+    function goToScene(sceneKey) {
+      if (!Scenes[sceneKey]) return;
+      SpeechService.stopAll();
+      State.currentScene = sceneKey;
+
+      const viewport = document.getElementById('scene-viewport');
+      if (viewport) {
+        viewport.innerHTML = Scenes[sceneKey]();
+      }
+
+      const stepName = document.getElementById('step-name');
+      const stepNumber = document.getElementById('step-number');
+      const currentIndex = SceneOrder.findIndex(s => s.id === sceneKey);
+      if (currentIndex !== -1 && stepName && stepNumber) {
+        stepName.textContent = SceneOrder[currentIndex].name;
+        stepNumber.textContent = `${currentIndex + 1} / ${SceneOrder.length}`;
+      }
+
+      updateSlideAudioButtonState(false);
+      if (State.autoPlayOnSceneChange) {
+        triggerSceneVoice(sceneKey);
+      }
+    }
+
+    function nextScene() {
+      const currentIndex = SceneOrder.findIndex(s => s.id === State.currentScene);
+      if (currentIndex === -1) return;
+
+      if (State.currentScene === 'countdown') {
+        executeBranchAnalysis();
+        return;
+      }
+      if (['branchA', 'branchB', 'branchC'].includes(State.currentScene)) {
+        goToScene('gap_analysis');
+        return;
+      }
+      if (currentIndex < SceneOrder.length - 1) {
+        goToScene(SceneOrder[currentIndex + 1].id);
+      }
+    }
+
+    function prevScene() {
+      const currentIndex = SceneOrder.findIndex(s => s.id === State.currentScene);
+      if (currentIndex > 0) {
+        goToScene(SceneOrder[currentIndex - 1].id);
+      }
+    }
+
+    function playCrowdVoiceSequence() {
+      SoundEngine.playCrowdCheer();
+      SpeechService.speakCharacter('crowd', 'Quay lại đi! Đăng lên nhóm lớp cho mọi người xem!');
+    }
+
+    function playScene1DialogueFlow() {
+      SpeechService.stopAll();
+      SoundEngine.playCrowdCheer();
+      
+      const cardAn = document.getElementById('dialogue-card-an');
+      const cardHoang = document.getElementById('dialogue-card-hoang');
+      const cardCrowd = document.getElementById('dialogue-card-crowd');
+      const cardMinh = document.getElementById('dialogue-card-minh');
+
+      if (cardAn) cardAn.classList.add('ring-2', 'ring-rose-400');
+      SpeechService.speakCharacter('an', 'Cậu nói xấu tôi trong nhóm lớp đúng không? Cậu còn nói thế à?', () => {
+        if (cardAn) cardAn.classList.remove('ring-2', 'ring-rose-400');
+        if (cardHoang) cardHoang.classList.add('ring-2', 'ring-amber-400');
+
+        const t1 = setTimeout(() => {
+          SpeechService.speakCharacter('hoang', 'Tôi nói gì thì liên quan gì đến cậu? Tránh ra!', () => {
+            if (cardHoang) cardHoang.classList.remove('ring-2', 'ring-amber-400');
+            if (cardCrowd) cardCrowd.classList.add('ring-2', 'ring-amber-400');
+
+            const t2 = setTimeout(() => {
+              SoundEngine.playCrowdCheer();
+              SpeechService.speakCharacter('crowd', 'Quay lại đi! Đăng lên nhóm lớp cho mọi người xem!', () => {
+                if (cardCrowd) cardCrowd.classList.remove('ring-2', 'ring-amber-400');
+                if (cardMinh) cardMinh.classList.add('ring-2', 'ring-sky-400');
+                
+                const t3 = setTimeout(() => {
+                  SpeechService.speakCharacter('minh', 'Minh bất giác rút điện thoại ra... mình có nên quay không? Nếu mình cũng quay thì danh dự bạn bè sẽ ra sao?', () => {
+                    if (cardMinh) cardMinh.classList.remove('ring-2', 'ring-sky-400');
+                  });
+                }, 500);
+                State.activeFlowTimers.push(t3);
+              });
+            }, 500);
+            State.activeFlowTimers.push(t2);
+          });
+        }, 500);
+        State.activeFlowTimers.push(t1);
+      });
+    }
+
+    function triggerSceneVoice(sceneKey) {
+      const script = SlideAudioScripts[sceneKey];
+      if (!script) return;
+      if (sceneKey === 'countdown') {
+        startCountdownClock();
+      }
+      if (sceneKey === 'branchD' || sceneKey === 'final_climax') {
+        SoundEngine.playPeaceChime();
+      }
+      updateSlideAudioButtonState(true);
+      SpeechService.speakCharacter(script.role, script.text, () => {
+        updateSlideAudioButtonState(false);
+      });
+    }
+
+    /* ==========================================================================
+       USER INTERACTION HANDLERS
+       ========================================================================== */
+    function startSimulation() {
+      SoundEngine.init();
+      SoundEngine.playSchoolDrum();
+      setTimeout(() => {
+        goToScene('scene1');
+      }, 1500);
+    }
+
+    function freezeSceneAtDecision() {
+      SoundEngine.playFreeze();
+      goToScene('countdown');
+    }
+
+    function startCountdownClock() {
+      State.countdownRemaining = 30;
+      const display = document.getElementById('countdown-timer');
+      clearInterval(State.countdownTimer);
+
+      State.countdownTimer = setInterval(() => {
+        State.countdownRemaining--;
+        if (display) {
+          display.textContent = `00:${State.countdownRemaining < 10 ? '0' : ''}${State.countdownRemaining}`;
+        }
+        if (State.countdownRemaining > 0 && State.countdownRemaining <= 10) {
+          SoundEngine.playTick();
+        }
+        if (State.countdownRemaining <= 0) {
+          clearInterval(State.countdownTimer);
+        }
+      }, 1000);
+    }
+
+    function selectDecision(option) {
+      State.userChoice = option;
+      SoundEngine.init();
+      SoundEngine.playTick();
+
+      ['A', 'B', 'C', 'D'].forEach(opt => {
+        const card = document.getElementById(`card-opt-${opt}`);
+        if (!card) return;
+        if (opt === option) {
+          card.classList.add('ring-2', 'ring-sky-400', 'bg-slate-800/90');
+        } else {
+          card.classList.remove('ring-2', 'ring-sky-400', 'bg-slate-800/90');
+        }
+      });
+
+      const confirmBox = document.getElementById('choice-confirmation-box');
+      const previewText = document.getElementById('choice-preview-text');
+      if (confirmBox && previewText) {
+        confirmBox.classList.remove('opacity-0', 'translate-y-3');
+        confirmBox.classList.add('opacity-100', 'translate-y-0');
+
+        const mapDescriptions = {
+          'A': "Bạn chọn: Bỏ đi vì nghĩ không liên quan đến mình.",
+          'B': "Bạn chọn: Rút điện thoại quay clip theo lời giục của đám đông.",
+          'C': "Bạn chọn: Một mình bước vào giữa hai bạn để can ngăn.",
+          'D': "Bạn chọn: Hạ điện thoại, dặn bạn bè và chạy đi tìm cô giáo."
+        };
+        previewText.textContent = mapDescriptions[option] || "Lựa chọn của bạn sẽ tạo ra một diễn biến khác.";
+      }
+    }
+
+    function executeBranchAnalysis() {
+      if (!State.userChoice) selectDecision('D');
+      clearInterval(State.countdownTimer);
+      
+      if (State.userChoice === 'A') goToScene('branchA');
+      else if (State.userChoice === 'B') {
+        SoundEngine.playCameraShutter();
+        goToScene('branchB');
+      }
+      else if (State.userChoice === 'C') goToScene('branchC');
+      else if (State.userChoice === 'D') goToScene('branchD');
+    }
+
+    function resetSimulation() {
+      SpeechService.stopAll();
+      State.userChoice = null;
+      goToScene('opening');
+    }
+
+    function toggleAudio() {
+      State.soundEnabled = !State.soundEnabled;
+      const icon = document.getElementById('sound-icon');
+      if (icon) {
+        icon.className = State.soundEnabled ? "fa-solid fa-volume-high text-sky-400" : "fa-solid fa-volume-xmark text-slate-500";
+      }
+      if (!State.soundEnabled) SpeechService.stopAll();
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        document.getElementById('fullscreen-icon').className = "fa-solid fa-compress";
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+          document.getElementById('fullscreen-icon').className = "fa-solid fa-expand";
+        }
+      }
+    }
+
+    function openAIVoiceModal() {
+      const modal = document.getElementById('ai-voice-modal');
+      const input = document.getElementById('input-gemini-key');
+      if (modal) {
+        if (input) input.value = State.apiKey;
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100');
+      }
+    }
+
+    function closeAIVoiceModal() {
+      const modal = document.getElementById('ai-voice-modal');
+      if (modal) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modal.classList.remove('opacity-100');
+      }
+    }
+
+    function saveVoiceSettings() {
+      const input = document.getElementById('input-gemini-key');
+      if (input) {
+        let key = input.value.trim().replace(/['"`\s]/g, '');
+        State.apiKey = key;
+        if (key) {
+          sessionStorage.setItem('GEMINI_API_KEY', key);
+          showNarratorText("Đã kích hoạt giọng Gemini AI Studio.");
+        } else {
+          sessionStorage.removeItem('GEMINI_API_KEY');
+          showNarratorText("Đã chuyển sang giọng đọc tiếng Việt của thiết bị.");
+        }
+        updateVoiceIndicator(false);
+      }
+      closeAIVoiceModal();
+    }
+
+    function clearVoiceSettings() {
+      State.apiKey = '';
+      sessionStorage.removeItem('GEMINI_API_KEY');
+      const input = document.getElementById('input-gemini-key');
+      if (input) input.value = '';
+      updateVoiceIndicator(false);
+    }
+
+    function toggleKeyVisibility() {
+      const input = document.getElementById('input-gemini-key');
+      const icon = document.getElementById('eye-icon');
+      if (!input || !icon) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-regular fa-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-regular fa-eye';
+      }
+    }
+
+    async function testSpeechSample() {
+      const input = document.getElementById('input-gemini-key');
+      const feedback = document.getElementById('ai-voice-feedback');
+      const testBtn = document.getElementById('btn-test-voice');
+      const rawKey = input ? input.value : '';
+      const key = rawKey.trim().replace(/['"`\s]/g, '');
+
+      State.apiKey = key;
+      if (key) sessionStorage.setItem('GEMINI_API_KEY', key);
+      SoundEngine.init();
+
+      if (feedback) {
+        feedback.className = "text-[11px] mt-1.5 text-sky-600 block flex items-center gap-1.5";
+        feedback.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang kết nối mô hình Gemini TTS...`;
+      }
+      if (testBtn) testBtn.disabled = true;
+
+      try {
+        await SpeechService.callGeminiTTS("Xin chào quý thầy cô và các bạn. Đây là giọng đọc nhân vật bằng trí tuệ nhân tạo Gemini.", "teacher");
+        if (feedback) {
+          feedback.className = "text-[11px] mt-1.5 text-emerald-600 block font-medium";
+          feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Kết nối thành công! Đang phát giọng đọc Gemini TTS chuẩn tiếng Việt.`;
+        }
+      } catch (err) {
+        if (feedback) {
+          feedback.className = "text-[11px] mt-1.5 text-rose-600 block leading-relaxed font-medium";
+          feedback.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> Không thể kết nối Gemini TTS: ${err.message}. Vui lòng kiểm tra lại API Key từ Google AI Studio.`;
+        }
+      } finally {
+        if (testBtn) testBtn.disabled = false;
+        updateVoiceIndicator(false);
+      }
+    }
+
+    let currentLadderStep = 1;
+    function advanceLadderStep() {
+      currentLadderStep = currentLadderStep >= 4 ? 1 : currentLadderStep + 1;
+      highlightLadderStep(currentLadderStep);
+    }
+
+    function highlightLadderStep(step) {
+      currentLadderStep = step;
+      [1, 2, 3, 4].forEach(s => {
+        const el = document.getElementById(`ladder-step-${s}`);
+        if (!el) return;
+        if (s === step) {
+          el.className = "cursor-pointer p-4 rounded-xl bg-slate-900 border-2 border-sky-400 transition scale-105 space-y-2 shadow-lg";
+        } else {
+          el.className = "cursor-pointer p-4 rounded-xl bg-slate-900 border-2 border-slate-700 transition hover:scale-105 space-y-2";
+        }
+      });
+
+      const details = {
+        1: "Bậc 1: Nhận diện rõ hành vi xúc phạm danh dự và phát tán hình ảnh là vi phạm pháp luật và nội quy trường học.",
+        2: "Bậc 2: Tự thân học sinh cảm thấy thương bạn, không muốn bạn bị bẽ mặt trước mạng xã hội.",
+        3: "Bậc 3: Học sinh được thực hành thuần thục: Biết cách nói lời can thiệp an toàn và nhanh chóng tìm đúng thầy cô.",
+        4: "Bậc 4: Trở thành phản xạ tự nhiên. Cả lớp tự giác hạ điện thoại xuống và cùng nhau bảo vệ bình yên lớp học."
+      };
+      const textEl = document.getElementById('ladder-detail-text');
+      const numEl = document.getElementById('ladder-step-num');
+      if (textEl) textEl.textContent = details[step];
+      if (numEl) numEl.textContent = step >= 4 ? '1 (Lặp lại)' : (step + 1);
+    }
+
+    function select3LTab(tabKey) {
+      ['L1', 'L2', 'L3'].forEach(k => {
+        const tab = document.getElementById(`tab-3L-${k}`);
+        if (!tab) return;
+        if (k === tabKey) {
+          tab.classList.add('border-sky-400', 'bg-sky-950/70');
+          tab.classList.remove('border-slate-700', 'bg-slate-900');
+        } else {
+          tab.classList.remove('border-sky-400', 'bg-sky-950/70');
+          tab.classList.add('border-slate-700', 'bg-slate-900');
+        }
+      });
+
+      const descMap = {
+        'L1': "<strong>L1 – LUẬT PHÁP:</strong> Ranh giới pháp lý rõ ràng giúp học sinh hiểu rằng hành vi quay clip xúc phạm không phải trò đùa mà gắn liền với trách nhiệm pháp lý.",
+        'L2': "<strong>L2 – LỰA CHỌN:</strong> Năng lực đưa ra quyết định có trách nhiệm. Minh không chọn theo số đông kích động mà chủ động đi tìm người lớn.",
+        'L3': "<strong>L3 – LAN TỎA:</strong> Một người lựa chọn đúng sẽ truyền cảm hứng cho những bạn khác hạ máy xuống, tạo thành chuẩn mực văn hóa tập thể bền vững."
+      };
+      const contentBox = document.getElementById('content-3L-box');
+      if (contentBox) contentBox.innerHTML = descMap[tabKey];
+    }
+
+    function handleSocraticResponse(type) {
+      const history = document.getElementById('socratic-chat-history');
+      const optContainer = document.getElementById('socratic-options');
+      if (!history || !optContainer) return;
+
+      if (type === 1) {
+        history.innerHTML += `
+          <div class="flex items-start justify-end space-x-2.5">
+            <div class="p-3 rounded-2xl rounded-tr-none bg-sky-600 text-white max-w-lg leading-relaxed flex items-center justify-between gap-2">
+              <span>Em nghĩ mình chỉ quay lại làm kỷ niệm hoặc chia sẻ cho bạn khác xem thôi.</span>
+              <button onclick="SpeechService.toggleSpeak('minh', 'Em nghĩ mình chỉ quay lại làm kỷ niệm hoặc chia sẻ cho bạn khác xem thôi.', this)" class="audio-btn p-1 rounded bg-sky-700 hover:bg-sky-800 text-sky-100 text-[10px] shrink-0" title="Nghe câu này"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+          </div>
+          <div class="flex items-start space-x-2.5">
+            <div class="w-7 h-7 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 border border-sky-400/40">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="p-3 rounded-2xl rounded-tl-none bg-slate-800/90 text-slate-200 border border-slate-700 max-w-lg leading-relaxed flex items-center justify-between gap-2">
+              <span>Nếu clip đó xuất hiện trên mạng và bạn của em bị hàng nghìn người bình luận chế giễu, em nghĩ bạn ấy sẽ cảm thấy thế nào khi đến lớp vào ngày mai?</span>
+              <button onclick="SpeechService.toggleSpeak('teacher', 'Nếu clip đó xuất hiện trên mạng và bạn của em bị hàng nghìn người bình luận chế giễu, em nghĩ bạn ấy sẽ cảm thấy thế nào khi đến lớp vào ngày mai?', this)" class="audio-btn p-1 rounded bg-slate-700 hover:bg-sky-600 text-sky-300 hover:text-white text-[10px] shrink-0" title="Nghe câu hỏi gợi mở"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+          </div>
+        `;
+        optContainer.innerHTML = `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 hover:bg-emerald-900/60 border border-slate-700 hover:border-emerald-400 text-left text-slate-200 transition gap-2">
+            <button onclick="handleSocraticResponse(3)" class="text-left text-slate-200 flex-1">
+              💬 “Em hiểu rồi, bạn sẽ rất sợ hãi và có thể rơi vào trầm cảm. Em sẽ dừng lại ngay.”
+            </button>
+            <button onclick="event.stopPropagation(); SpeechService.toggleSpeak('minh', 'Em hiểu rồi, bạn sẽ rất sợ hãi và có thể rơi vào trầm cảm. Em sẽ dừng lại ngay.', this)" class="audio-btn p-1 rounded bg-slate-800 hover:bg-emerald-600 text-emerald-300 text-xs shrink-0" title="Nghe câu trả lời"><i class="fa-solid fa-volume-high"></i></button>
+          </div>
+        `;
+      } else if (type === 2 || type === 3) {
+        history.innerHTML += `
+          <div class="flex items-start justify-end space-x-2.5">
+            <div class="p-3 rounded-2xl rounded-tr-none bg-emerald-600 text-white max-w-lg leading-relaxed flex items-center justify-between gap-2">
+              <span>Em nhận ra nếu mình cũng hò reo hoặc quay phim thì sẽ làm tổn thương bạn. Em cần tìm thầy cô hỗ trợ.</span>
+              <button onclick="SpeechService.toggleSpeak('minh', 'Em nhận ra nếu mình cũng hò reo hoặc quay phim thì sẽ làm tổn thương bạn. Em cần tìm thầy cô hỗ trợ.', this)" class="audio-btn p-1 rounded bg-emerald-700 hover:bg-emerald-800 text-emerald-100 text-[10px] shrink-0" title="Nghe câu này"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+          </div>
+          <div class="flex items-start space-x-2.5">
+            <div class="w-7 h-7 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 border border-sky-400/40">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <div class="p-3 rounded-2xl rounded-tl-none bg-slate-800/90 text-slate-200 border border-slate-700 max-w-lg leading-relaxed flex items-center justify-between gap-2">
+              <span>Rất chính xác! Đó chính là bản lĩnh của một học sinh có trách nhiệm: Biết DỪNG LẠI trước số đông, SUY NGHĨ về hậu quả và LỰA CHỌN sự an toàn.</span>
+              <button onclick="SpeechService.toggleSpeak('teacher', 'Rất chính xác! Đó chính là bản lĩnh của một học sinh có trách nhiệm: Biết DỪNG LẠI trước số đông, SUY NGHĨ về hậu quả và LỰA CHỌN sự an toàn.', this)" class="audio-btn p-1 rounded bg-slate-700 hover:bg-sky-600 text-sky-300 hover:text-white text-[10px] shrink-0" title="Nghe nhận xét"><i class="fa-solid fa-volume-high"></i></button>
+            </div>
+          </div>
+        `;
+        optContainer.innerHTML = `
+          <button onclick="goToScene('minh_reprise')" class="col-span-2 p-3 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white font-bold text-center transition">
+            ÁP DỤNG NGAY VÀO CAO TRÀO TÌNH HUỐNG <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
+        `;
+      }
+      history.scrollTop = history.scrollHeight;
+    }
+
+    /* ==========================================================================
+       KEYBOARD SHORTCUTS & APP BOOTSTRAP
+       ========================================================================== */
+    document.addEventListener('click', () => {
+      SoundEngine.init();
+    }, { once: false });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        if (e.key === ' ' && e.target && e.target.tagName === 'BUTTON') return;
+        e.preventDefault();
+        nextScene();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevScene();
+      }
+    });
+
+    window.onload = function() {
+      goToScene('opening');
+    };
+  </script>
+</body>
+</html>
